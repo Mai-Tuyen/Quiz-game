@@ -33,7 +33,7 @@ async function getCategories(): Promise<Category[]> {
   return data || [];
 }
 
-export default async function Home() {
+export default async function CategoriesPage() {
   const categories = await getCategories();
 
   return (
@@ -43,6 +43,14 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              Quiz Categories
+            </h1>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-6">
+              Choose from a variety of quiz categories to test your knowledge
+              and learn something new!
+            </p>
+
             {/* Stats */}
             {categories.length > 0 && (
               <div className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700">

@@ -125,7 +125,7 @@ A modern, interactive quiz platform that allows users to test their knowledge ac
 
 #### 3.2.3 Footer
 
-- **Copyright**: © 2025 Quiz Website. All rights reserved.
+- **Copyright**: © 2025 MaiTuyen. All rights reserved.
 - **Links**: Privacy Policy, Terms of Service, Contact
 
 ### 3.3 Quiz Detail Screen

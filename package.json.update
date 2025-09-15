@@ -1,0 +1,7 @@
+# Add these scripts to your package.json
+
+"scripts": {
+  "db:setup": "npx tsx scripts/setup-database.ts",
+  "db:sample": "npx tsx scripts/setup-database.ts --sample-only",
+  "db:reset": "echo 'Please run the setup-database.sql script in Supabase SQL Editor to reset the database'"
+}
