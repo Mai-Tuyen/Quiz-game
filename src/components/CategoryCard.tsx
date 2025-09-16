@@ -11,10 +11,10 @@ export default function CategoryCard({
   quizCount,
 }: CategoryCardProps) {
   return (
-    <Link href={`/category/${category.slug}`} className="group block">
+    <Link href={`/categories/${category.slug}`} className="group block">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-1">
         {/* Icon */}
-        <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-4xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
+        <div className="flex justify-center items-center w-16 h-16 mx-auto mb-4 text-4xl bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-full group-hover:scale-110 transition-transform duration-300">
           {category.icon_url}
         </div>
 
