@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { createClient } from "../../../utils/supabase/client";
+import { useState, useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 
@@ -67,7 +67,7 @@ export default function LoginPage() {
             </svg>
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Login
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Welcome back to Quiz Game
@@ -105,7 +105,7 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              className="group w-full relative  flex justify-center py-3 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 <FcGoogle className="h-5 w-5" />
@@ -138,23 +138,6 @@ export default function LoginPage() {
                 "Continue with Google"
               )}
             </button>
-          </div>
-
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-50 text-gray-500">
-                  Secure authentication powered by Supabase
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="text-center text-xs text-gray-500">
-            By signing in, you agree to our terms of service and privacy policy.
           </div>
         </div>
       </div>
