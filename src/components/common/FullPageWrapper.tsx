@@ -11,6 +11,7 @@ export default function FullPageWrapper({ children }: { children: React.ReactNod
         debug
         credits={{ enabled: false }}
         render={() => <ReactFullpage.Wrapper>{children}</ReactFullpage.Wrapper>}
+        licenseKey='ssss'
       />
     </div>
   )

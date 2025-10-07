@@ -19,7 +19,7 @@ export default function Header() {
         data: { session }
       } = await supabase.auth.getSession()
       setUser(session?.user ?? null)
-      storage.set('user', session?.user ?? null)  
+      storage.set('user', session?.user ?? null)
       setLoading(false)
     }
 
@@ -45,8 +45,8 @@ export default function Header() {
       <div className='mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between'>
           <Link href='/' className='flex items-center space-x-2'>
-            <span className='text-2xl'>🎯</span>
-            <span className='text-xl font-bold text-gray-900 dark:text-white'>Quiz Game</span>
+            <Image src='/images/logo.png' alt='Logo' width={30} height={30} />
+            <span className='text-xl font-bold text-gray-900 dark:text-white'>ZoloQuiz</span>
           </Link>
           <nav className='hidden items-center space-x-6 md:flex'>
             {loading ? (
