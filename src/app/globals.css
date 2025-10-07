@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -45,6 +45,12 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Full screen hero section */
+#hero {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
 /* Custom gradient backgrounds */
 .gradient-bg {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -52,4 +58,11 @@ html {
 
 .gradient-bg-light {
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.box-shadow-3d {
+  box-shadow:
+    rgba(50, 50, 93, 0.25) 0px 0px 0px -20px,
+    rgba(0, 0, 0, 0.3) 0px 0px 0px -30px,
+    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 }

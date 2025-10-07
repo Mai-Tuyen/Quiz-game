@@ -1,258 +1,242 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { motion } from "framer-motion";
-import { getQuizWithQuestions } from "@/lib/database/quizzes";
-import { createQuizAttempt, submitQuizAttempt } from "@/lib/database/attempts";
-import QuestionDisplay from "@/components/quiz/QuestionDisplay";
-import QuestionMatrix from "@/components/quiz/QuestionMatrix";
-import Timer from "@/components/quiz/Timer";
-import NavigationControls from "@/components/quiz/NavigationControls";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from 'react'
+import { useParams } from 'next/navigation'
+import { motion } from 'framer-motion'
+import { getQuizWithQuestions } from '@/lib/database/quizzes'
+import { createQuizAttempt, submitQuizAttempt } from '@/lib/database/attempts'
+import QuestionDisplay from '@/components/quiz/QuestionDisplay'
+import QuestionMatrix from '@/components/quiz/QuestionMatrix'
+import Timer from '@/components/quiz/Timer'
+import NavigationControls from '@/components/quiz/NavigationControls'
+import { useRouter } from 'next/navigation'
+import { storage } from '@/utils/supabase/storage'
 
 interface Question {
-  id: string;
-  question_text: string;
-  question_type: "single_choice" | "multiple_choice" | "sequence" | "drag_word";
-  question_order: number;
-  points: number;
-  explanation: string;
-  question_data: any;
+  id: string
+  question_text: string
+  question_type: 'single_choice' | 'multiple_choice' | 'sequence' | 'drag_word'
+  question_order: number
+  points: number
+  explanation: string
+  question_data: any
 }
 
 interface Quiz {
-  id: string;
-  title: string;
-  slug: string;
-  description: string;
-  time_limit: number;
-  difficulty_level: number;
+  id: string
+  title: string
+  slug: string
+  description: string
+  time_limit: number
+  difficulty_level: number
   category: {
-    id: string;
-    name: string;
-    slug: string;
-    description: string;
-    icon_url: string;
-  };
-  questions: Question[];
-  question_count: number;
+    id: string
+    name: string
+    slug: string
+    description: string
+    icon_url: string
+  }
+  questions: Question[]
+  question_count: number
 }
 
-export default function QuizDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const quizSlug = params.slug as string;
+const user = storage.get('user')
 
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [markedForReview, setMarkedForReview] = useState<Set<string>>(
-    new Set()
-  );
-  const [timeRemaining, setTimeRemaining] = useState<number>(0);
-  const [isQuizStarted, setIsQuizStarted] = useState(false);
-  const [attemptId, setAttemptId] = useState<string | null>(null);
-  const [quizStartTime, setQuizStartTime] = useState<Date | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function QuizDetailPage() {
+  const params = useParams()
+  const router = useRouter()
+  const quizSlug = params.slug as string
+
+  const [quiz, setQuiz] = useState<Quiz | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [answers, setAnswers] = useState<Record<string, any>>({})
+  const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set())
+  const [timeRemaining, setTimeRemaining] = useState<number>(0)
+  const [isQuizStarted, setIsQuizStarted] = useState(false)
+  const [attemptId, setAttemptId] = useState<string | null>(null)
+  const [quizStartTime, setQuizStartTime] = useState<Date | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     async function fetchQuiz() {
       try {
-        setLoading(true);
-        const quizData = await getQuizWithQuestions(quizSlug);
+        setLoading(true)
+        const quizData = await getQuizWithQuestions(quizSlug)
 
         if (!quizData) {
-          setError("Quiz not found");
-          return;
+          setError('Quiz not found')
+          return
         }
 
-        setQuiz(quizData);
-        setTimeRemaining(quizData.time_limit * 60); // Convert minutes to seconds
+        setQuiz(quizData)
+        setTimeRemaining(quizData.time_limit * 60) // Convert minutes to seconds
       } catch (err) {
-        console.error("Error fetching quiz:", err);
-        setError("Failed to load quiz");
+        console.error('Error fetching quiz:', err)
+        setError('Failed to load quiz')
       } finally {
-        setLoading(false);
+        setLoading(false)
       }
     }
 
     if (quizSlug) {
-      fetchQuiz();
+      fetchQuiz()
     }
-  }, [quizSlug]);
+  }, [quizSlug])
 
   const startQuiz = async () => {
     try {
-      // For now, we'll use a dummy user ID. In a real app, this would come from authentication
-      const userId = "demo-user-123";
+      const userId = user?.id
 
-      if (!quiz) return;
+      if (!quiz) return
 
-      const newAttemptId = await createQuizAttempt(quiz.id, userId);
-      setAttemptId(newAttemptId);
-      setQuizStartTime(new Date());
-      setIsQuizStarted(true);
+      const newAttemptId = await createQuizAttempt(quiz.id, userId as string)
+      setAttemptId(newAttemptId)
+      setQuizStartTime(new Date())
+      setIsQuizStarted(true)
     } catch (error) {
-      console.error("Error starting quiz:", error);
-      setError("Failed to start quiz. Please try again.");
+      console.error('Error starting quiz:', error)
+      setError('Failed to start quiz. Please try again.')
     }
-  };
+  }
 
   const handleAnswerChange = (questionId: string, answer: any) => {
     setAnswers((prev) => ({
       ...prev,
-      [questionId]: answer,
-    }));
-  };
+      [questionId]: answer
+    }))
+  }
 
   const handleMarkForReview = (questionId: string) => {
     setMarkedForReview((prev) => {
-      const newSet = new Set(prev);
+      const newSet = new Set(prev)
       if (newSet.has(questionId)) {
-        newSet.delete(questionId);
+        newSet.delete(questionId)
       } else {
-        newSet.add(questionId);
+        newSet.add(questionId)
       }
-      return newSet;
-    });
-  };
+      return newSet
+    })
+  }
 
   const handleQuestionNavigation = (index: number) => {
-    setCurrentQuestionIndex(index);
-  };
+    setCurrentQuestionIndex(index)
+  }
 
   const handlePrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
+      setCurrentQuestionIndex(currentQuestionIndex - 1)
     }
-  };
+  }
 
   const handleNext = () => {
     if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(currentQuestionIndex + 1)
     }
-  };
+  }
 
   const handleSubmitQuiz = async () => {
-    if (!attemptId || !quizStartTime || isSubmitting) return;
+    if (!attemptId || !quizStartTime || isSubmitting) return
 
     // Show confirmation dialog
     const confirmed = window.confirm(
       "Are you sure you want to submit your quiz? You won't be able to change your answers after submission."
-    );
+    )
 
-    if (!confirmed) return;
+    if (!confirmed) return
 
     try {
-      setIsSubmitting(true);
+      setIsSubmitting(true)
 
-      const results = await submitQuizAttempt(
-        attemptId,
-        answers,
-        quizStartTime
-      );
+      const results = await submitQuizAttempt(attemptId, answers, quizStartTime)
 
       // Redirect to results page
-      router.push(`/result/${attemptId}`);
+      router.push(`/result/${attemptId}`)
     } catch (error) {
-      console.error("Error submitting quiz:", error);
-      setError("Failed to submit quiz. Please try again.");
-      setIsSubmitting(false);
+      console.error('Error submitting quiz:', error)
+      setError('Failed to submit quiz. Please try again.')
+      setIsSubmitting(false)
     }
-  };
+  }
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="text-center"
+          className='text-center'
         >
-          <div className="text-6xl mb-4 animate-bounce">📝</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Loading Quiz...
-          </h1>
-          <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className='mb-4 animate-bounce text-6xl'>📝</div>
+          <h1 className='mb-2 text-2xl font-bold text-gray-900'>Loading Quiz...</h1>
+          <div className='mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent'></div>
         </motion.div>
       </div>
-    );
+    )
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="text-center"
+          className='text-center'
         >
-          <div className="text-6xl mb-4">😞</div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Oops!</h1>
-          <p className="text-gray-600">{error}</p>
+          <div className='mb-4 text-6xl'>😞</div>
+          <h1 className='mb-2 text-2xl font-bold text-gray-900'>Oops!</h1>
+          <p className='text-gray-600'>{error}</p>
         </motion.div>
       </div>
-    );
+    )
   }
 
   if (!quiz) {
-    return null;
+    return null
   }
 
   // Quiz start screen
   if (!isQuizStarted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center p-4">
+      <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 p-4'>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-8 text-center"
+          className='w-full max-w-2xl rounded-2xl bg-white p-8 text-center shadow-xl'
         >
           <motion.div
-            className="text-6xl mb-6"
+            className='mb-6 text-6xl'
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             {quiz.category.icon_url}
           </motion.div>
 
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {quiz.title}
-          </h1>
-          <p className="text-gray-600 mb-8 leading-relaxed">
-            {quiz.description}
-          </p>
+          <h1 className='mb-4 text-3xl font-bold text-gray-900'>{quiz.title}</h1>
+          <p className='mb-8 leading-relaxed text-gray-600'>{quiz.description}</p>
 
-          <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-blue-50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-blue-600">
-                {quiz.question_count}
-              </div>
-              <div className="text-sm text-gray-600">Questions</div>
+          <div className='mb-8 grid grid-cols-3 gap-4'>
+            <div className='rounded-lg bg-blue-50 p-4'>
+              <div className='text-2xl font-bold text-blue-600'>{quiz.question_count}</div>
+              <div className='text-sm text-gray-600'>Questions</div>
             </div>
-            <div className="bg-green-50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-green-600">
-                {quiz.time_limit}
-              </div>
-              <div className="text-sm text-gray-600">Minutes</div>
+            <div className='rounded-lg bg-green-50 p-4'>
+              <div className='text-2xl font-bold text-green-600'>{quiz.time_limit}</div>
+              <div className='text-sm text-gray-600'>Minutes</div>
             </div>
-            <div className="bg-purple-50 rounded-lg p-4">
-              <div className="text-2xl font-bold text-purple-600">
-                Level {quiz.difficulty_level}
-              </div>
-              <div className="text-sm text-gray-600">Difficulty</div>
+            <div className='rounded-lg bg-purple-50 p-4'>
+              <div className='text-2xl font-bold text-purple-600'>Level {quiz.difficulty_level}</div>
+              <div className='text-sm text-gray-600'>Difficulty</div>
             </div>
           </div>
 
           <motion.button
             onClick={startQuiz}
-            className="bg-blue-600 text-white px-8 py-3 rounded-xl font-semibold text-lg hover:bg-blue-700 transition-colors duration-200"
+            className='rounded-xl bg-blue-600 px-8 py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-blue-700'
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -260,54 +244,48 @@ export default function QuizDetailPage() {
           </motion.button>
         </motion.div>
       </div>
-    );
+    )
   }
 
-  const currentQuestion = quiz.questions[currentQuestionIndex];
+  const currentQuestion = quiz.questions[currentQuestionIndex]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className='min-h-screen bg-gray-50'>
       {/* Quiz Interface */}
-      <div className="flex h-screen">
+      <div className='flex h-screen'>
         {/* Left Panel - Question Content */}
-        <div className="flex-1 flex flex-col">
+        <div className='flex flex-1 flex-col'>
           {/* Progress Header */}
-          <div className="bg-white border-b border-gray-200 p-4">
-            <div className="flex items-center justify-between mb-2">
-              <h1 className="text-lg font-semibold text-gray-900">
-                {quiz.title}
-              </h1>
-              <span className="text-sm text-gray-500">
+          <div className='border-b border-gray-200 bg-white p-4'>
+            <div className='mb-2 flex items-center justify-between'>
+              <h1 className='text-lg font-semibold text-gray-900'>{quiz.title}</h1>
+              <span className='text-sm text-gray-500'>
                 Question {currentQuestionIndex + 1} of {quiz.questions.length}
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className='h-2 w-full rounded-full bg-gray-200'>
               <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                className='h-2 rounded-full bg-blue-600 transition-all duration-300'
                 style={{
-                  width: `${
-                    ((currentQuestionIndex + 1) / quiz.questions.length) * 100
-                  }%`,
+                  width: `${((currentQuestionIndex + 1) / quiz.questions.length) * 100}%`
                 }}
               />
             </div>
           </div>
 
           {/* Question Display */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className='flex-1 overflow-y-auto p-6'>
             <QuestionDisplay
               question={currentQuestion}
               answer={answers[currentQuestion.id]}
-              onAnswerChange={(answer) =>
-                handleAnswerChange(currentQuestion.id, answer)
-              }
+              onAnswerChange={(answer) => handleAnswerChange(currentQuestion.id, answer)}
               isMarkedForReview={markedForReview.has(currentQuestion.id)}
               onMarkForReview={() => handleMarkForReview(currentQuestion.id)}
             />
           </div>
 
           {/* Navigation Controls */}
-          <div className="bg-white border-t border-gray-200 p-4">
+          <div className='border-t border-gray-200 bg-white p-4'>
             <NavigationControls
               currentIndex={currentQuestionIndex}
               totalQuestions={quiz.questions.length}
@@ -320,18 +298,14 @@ export default function QuizDetailPage() {
         </div>
 
         {/* Right Panel - Quiz Controls */}
-        <div className="w-80 bg-white border-l border-gray-200 flex flex-col">
+        <div className='flex w-80 flex-col border-l border-gray-200 bg-white'>
           {/* Timer */}
-          <div className="p-6 border-b border-gray-200">
-            <Timer
-              timeRemaining={timeRemaining}
-              totalTime={quiz.time_limit * 60}
-              onTimeUp={handleSubmitQuiz}
-            />
+          <div className='border-b border-gray-200 p-6'>
+            <Timer timeRemaining={timeRemaining} totalTime={quiz.time_limit * 60} onTimeUp={handleSubmitQuiz} />
           </div>
 
           {/* Question Matrix */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className='flex-1 overflow-y-auto p-6'>
             <QuestionMatrix
               questions={quiz.questions}
               currentQuestionIndex={currentQuestionIndex}
@@ -342,30 +316,30 @@ export default function QuizDetailPage() {
           </div>
 
           {/* Submit Button */}
-          <div className="p-6 border-t border-gray-200">
+          <div className='border-t border-gray-200 p-6'>
             <motion.button
               onClick={handleSubmitQuiz}
               disabled={isSubmitting}
-              className={`w-full py-3 rounded-lg font-semibold transition-colors duration-200 ${
+              className={`w-full rounded-lg py-3 font-semibold transition-colors duration-200 ${
                 isSubmitting
-                  ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  : "bg-green-600 text-white hover:bg-green-700"
+                  ? 'cursor-not-allowed bg-gray-400 text-gray-200'
+                  : 'bg-green-600 text-white hover:bg-green-700'
               }`}
               whileHover={isSubmitting ? undefined : { scale: 1.02 }}
               whileTap={isSubmitting ? undefined : { scale: 0.98 }}
             >
               {isSubmitting ? (
-                <div className="flex items-center justify-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className='flex items-center justify-center gap-2'>
+                  <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
                   Submitting...
                 </div>
               ) : (
-                "Submit Quiz"
+                'Submit Quiz'
               )}
             </motion.button>
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

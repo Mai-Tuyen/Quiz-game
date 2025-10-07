@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { createClient } from '../../utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
+import { storage } from '@/utils/supabase/storage'
 
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
@@ -18,6 +19,7 @@ export default function Header() {
         data: { session }
       } = await supabase.auth.getSession()
       setUser(session?.user ?? null)
+      storage.set('user', session?.user ?? null)  
       setLoading(false)
     }
 

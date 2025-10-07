@@ -1,142 +1,110 @@
-import { createClient } from "@/utils/supabase/server";
-import CategoryCard from "@/components/CategoryCard";
-import Link from "next/link";
+import { createClient } from '@/utils/supabase/server'
+import CategoryCard from '@/components/CategoryCard'
+import Link from 'next/link'
+import TypeQuote from '@/components/home/TypeQuote'
+import FullPageWrapper from '@/components/common/FullPageWrapper'
+import Footer from '@/app/Layout/Footer'
 
 export const metadata = {
-  title: "Quiz Categories | Quiz Game",
-  description:
-    "Explore our collection of quiz categories including Programming, Science, Geography, History, and more!",
-};
+  title: 'Quiz Categories | Quiz Game',
+  description: 'Explore our collection of quiz categories including Programming, Science, Geography, History, and more!'
+}
 
 interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  icon_url: string;
-  created_at: string;
+  id: string
+  name: string
+  slug: string
+  description: string
+  icon_url: string
+  created_at: string
 }
 
 async function getCategories(): Promise<Category[]> {
-  const supabase = await createClient();
+  const supabase = await createClient()
 
-  const { data, error } = await supabase
-    .from("categories")
-    .select("*")
-    .order("name", { ascending: true });
+  const { data, error } = await supabase.from('categories').select('*').order('name', { ascending: true })
 
   if (error) {
-    console.error("Error fetching categories:", error);
-    return [];
+    console.error('Error fetching categories:', error)
+    return []
   }
 
-  return data || [];
+  return data || []
 }
 
 export default async function Home() {
-  const categories = await getCategories();
+  const categories = await getCategories()
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Main Content */}
-      <main className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Hero Section */}
-          <div className="text-center mb-12">
-            {/* Stats */}
+    <div className='bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800'>
+      <FullPageWrapper>
+        {/* Hero Section with Fixed Background - Full Screen */}
+        <section
+          id='hero'
+          className='section relative flex h-screen w-full items-center justify-center overflow-hidden'
+        >
+          {/* Fixed Background Image */}
+          <div
+            className='absolute inset-0 bg-cover bg-fixed bg-center bg-no-repeat'
+            style={{
+              backgroundImage: "url('/images/bg-quiz-image.jpg')"
+            }}
+          >
+            {/* Overlay for better text readability */}
+            <div className='absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70' />
+          </div>
+
+          {/* Hero Content */}
+          <div className='relative z-10 mx-auto max-w-4xl px-4 text-center'>
+            <h1 className='mb-8 text-5xl font-bold text-balance text-white md:text-6xl'>Knowledge is freedom</h1>
+            <div className='flex min-h-[80px] items-center justify-center text-2xl font-light text-white/90 md:text-3xl'>
+              <TypeQuote quotes={['The only true wisdom is in knowing you know nothing.']} />
+            </div>
+          </div>
+          {/* Scroll Indicator */}
+          <div className='absolute bottom-20 left-1/2 -translate-x-1/2 transform animate-bounce'>
+            <div className='flex flex-col items-center text-white/80'>
+              <span className='mb-2 text-sm font-medium'>Scroll to explore</span>
+              <svg className='h-6 w-6' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 14l-7 7m0 0l-7-7m7 7V3' />
+              </svg>
+            </div>
+          </div>
+        </section>
+        {/* Main Content */}
+        <main id='content' className='section px-4 py-12 sm:px-6 lg:px-8'>
+          <div className='mx-auto mb-7 max-w-7xl'>
+            {/* Categories Grid */}
             {categories.length > 0 && (
-              <div className="inline-flex items-center px-6 py-3 bg-white dark:bg-gray-800 rounded-full shadow-lg border border-gray-200 dark:border-gray-700">
-                <span className="text-2xl mr-3">🎯</span>
-                <span className="text-gray-700 dark:text-gray-300 font-medium text-lg">
-                  {categories.length}{" "}
-                  {categories.length === 1 ? "Category" : "Categories"}{" "}
-                  Available
-                </span>
+              <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+                {categories.map((category) => (
+                  <CategoryCard key={category.id} category={category} />
+                ))}
+              </div>
+            )}
+
+            {/* Call to Action */}
+            {categories.length > 0 && (
+              <div className='mt-16 text-center'>
+                <div className='rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white'>
+                  <h2 className='mb-4 text-2xl font-bold md:text-3xl'>Ready to Test Your Knowledge?</h2>
+                  <p className='mx-auto mb-6 max-w-2xl text-blue-100'>
+                    Pick a category above and start your quiz journey. Challenge yourself with questions designed to
+                    test and expand your knowledge!
+                  </p>
+                  <div className='flex flex-wrap justify-center gap-3'>
+                    <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Multiple Choice</span>
+                    <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Drag & Drop</span>
+                    <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Sequence Questions</span>
+                    <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>And More!</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
-
-          {/* Categories Grid */}
-          {categories.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {categories.map((category) => (
-                <CategoryCard key={category.id} category={category} />
-              ))}
-            </div>
-          ) : (
-            /* Empty State */
-            <div className="text-center py-16">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-12 max-w-md mx-auto border border-gray-200 dark:border-gray-700">
-                <div className="text-8xl mb-6">📚</div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-                  No Categories Found
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  It looks like there are no quiz categories available yet. Make
-                  sure your database is set up with sample data.
-                </p>
-
-                {/* Setup Instructions */}
-                <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6 text-left">
-                  <h4 className="font-semibold text-blue-900 dark:text-blue-300 mb-2">
-                    📝 Setup Instructions:
-                  </h4>
-                  <ol className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
-                    <li>1. Check your .env.local file</li>
-                    <li>2. Run the database setup script</li>
-                    <li>3. Verify sample data was created</li>
-                  </ol>
-                </div>
-
-                <div className="flex gap-3 justify-center">
-                  <button
-                    onClick={() => window.location.reload()}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Refresh Page
-                  </button>
-                  <Link
-                    href="/"
-                    className="bg-gray-600 hover:bg-gray-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Go Home
-                  </Link>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Call to Action */}
-          {categories.length > 0 && (
-            <div className="text-center mt-16">
-              <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-                <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                  Ready to Test Your Knowledge?
-                </h2>
-                <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
-                  Pick a category above and start your quiz journey. Challenge
-                  yourself with questions designed to test and expand your
-                  knowledge!
-                </p>
-                <div className="flex flex-wrap gap-3 justify-center">
-                  <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
-                    Multiple Choice
-                  </span>
-                  <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
-                    Drag & Drop
-                  </span>
-                  <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
-                    Sequence Questions
-                  </span>
-                  <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
-                    And More!
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
+          <Footer />
+        </main>
+      </FullPageWrapper>
     </div>
-  );
+  )
 }
