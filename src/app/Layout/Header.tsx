@@ -6,12 +6,13 @@ import { createClient } from '../../utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
 import { storage } from '@/utils/supabase/storage'
-
+import { LoginModal } from '@/app/auth/login/ModalLogin'
+import './Header.scss'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
-
+  const [open, setOpen] = useState(false)
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
@@ -40,13 +41,17 @@ export default function Header() {
     await supabase.auth.signOut()
   }
 
+  const handleOpenModalLogin = (open: boolean) => {
+    setOpen(open)
+  }
+
   return (
     <header className='sticky top-0 z-10 border-b border-gray-200 bg-white/80 backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/80'>
       <div className='mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8'>
         <div className='flex items-center justify-between'>
           <Link href='/' className='flex items-center space-x-2'>
             <Image src='/images/logo.png' alt='Logo' width={30} height={30} />
-            <span className='text-xl font-bold text-gray-900 dark:text-white'>ZoloQuiz</span>
+            <span className='text-primary text-xl font-bold dark:text-white'>ZoloQuiz</span>
           </Link>
           <nav className='hidden items-center space-x-6 md:flex'>
             {loading ? (
@@ -72,8 +77,9 @@ export default function Header() {
               </div>
             ) : (
               <Link
-                href='/auth/login'
-                className='text-gray-600 transition-colors hover:text-blue-600 dark:text-gray-300 dark:hover:text-blue-400'
+                href='#'
+                onClick={() => handleOpenModalLogin(true)}
+                className='text-primary rounded-md border-1 border-gray-500 px-4 py-1 font-bold shadow-md transition-all duration-300 hover:scale-105'
               >
                 Login
               </Link>
@@ -81,6 +87,7 @@ export default function Header() {
           </nav>
         </div>
       </div>
+      <LoginModal open={open} onOpenChange={handleOpenModalLogin} />
     </header>
   )
 }
