@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import CategoryCard from '@/components/CategoryCard'
 import Link from 'next/link'
 import TypeQuote from '@/components/home/TypeQuote'
-import FullPageWrapper from '@/components/common/FullPageWrapper'
+import FullPageClient from '@/components/common/FullPageClient'
 import Footer from '@/app/Layout/Footer'
 
 export const metadata = {
@@ -37,12 +37,9 @@ export default async function Home() {
 
   return (
     <div className='bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800'>
-      <FullPageWrapper>
+      <FullPageClient>
         {/* Hero Section with Fixed Background - Full Screen */}
-        <section
-          id='hero'
-          className='section relative flex h-screen w-full items-center justify-center overflow-hidden'
-        >
+        <section id='hero' className='relative flex h-screen w-full items-center justify-center overflow-hidden'>
           {/* Fixed Background Image */}
           <div
             className='absolute inset-0 bg-cover bg-fixed bg-center bg-no-repeat'
@@ -71,9 +68,10 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
         {/* Main Content */}
-        <main id='content' className='section px-4 py-12 sm:px-6 lg:px-8'>
-          <div className='mx-auto mb-7 max-w-7xl'>
+        <main id='content' className='flex h-screen w-full items-center justify-center px-4 sm:px-6 lg:px-8'>
+          <div className='mx-auto max-w-7xl'>
             {/* Categories Grid */}
             {categories.length > 0 && (
               <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
@@ -84,26 +82,24 @@ export default async function Home() {
             )}
           </div>
         </main>
-        <div className='section'>
-          {/* Call to Action */}
-          <div className='mb-16 h-[600px] text-center'>
-            <div className='flex h-full flex-col items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white'>
-              <h2 className='mb-4 text-2xl font-bold md:text-3xl'>Ready to Test Your Knowledge?</h2>
-              <p className='mx-auto mb-6 max-w-2xl text-blue-100'>
-                Pick a category above and start your quiz journey. Challenge yourself with questions designed to test
-                and expand your knowledge!
-              </p>
-              <div className='flex flex-wrap justify-center gap-3'>
-                <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Multiple Choice</span>
-                <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Drag & Drop</span>
-                <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Sequence Questions</span>
-                <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>And More!</span>
-              </div>
+
+        {/* Call to Action */}
+        <div className='flex h-full w-full items-center justify-center px-4 py-8'>
+          <div className='flex h-full w-full flex-col items-center justify-center rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white'>
+            <h2 className='mb-4 text-2xl font-bold md:text-3xl'>Ready to Test Your Knowledge?</h2>
+            <p className='mx-auto mb-6 max-w-2xl text-blue-100'>
+              Pick a category above and start your quiz journey. Challenge yourself with questions designed to test and
+              expand your knowledge!
+            </p>
+            <div className='flex flex-wrap justify-center gap-3'>
+              <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Multiple Choice</span>
+              <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Drag & Drop</span>
+              <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>Sequence Questions</span>
+              <span className='rounded-full bg-white/20 px-4 py-2 text-sm font-medium'>And More!</span>
             </div>
           </div>
-          <Footer />
         </div>
-      </FullPageWrapper>
+      </FullPageClient>
     </div>
   )
 }
