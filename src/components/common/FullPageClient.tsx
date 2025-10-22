@@ -97,7 +97,7 @@ export default function FullPageClient({ children }: { children: React.ReactNode
             key={index}
             onClick={() => setCurrentPage(index)}
             className={`h-3 w-3 rounded-full transition-all duration-300 ${
-              index === currentPage ? 'scale-125 bg-white' : 'bg-white/50 hover:bg-white/75'
+              index === currentPage ? 'scale-125 bg-white' : 'bg-gray-400 hover:bg-white/75'
             }`}
             aria-label={`Go to page ${index + 1}`}
           />
