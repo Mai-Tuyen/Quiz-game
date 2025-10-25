@@ -3,6 +3,7 @@ import { createClient } from '../../../utils/supabase/server'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
+  console.log(searchParams)
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   let next = searchParams.get('next') ?? '/'

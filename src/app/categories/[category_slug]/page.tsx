@@ -152,76 +152,13 @@ export default function CategoryQuizzesPage() {
           ) : null}
         </motion.div>
 
-        {/* Stats Section */}
-        {!loading && category && (
-          <motion.div
-            variants={statsVariants}
-            transition={{
-              duration: 0.5,
-              delay: 0.2,
-              ease: 'easeOut'
-            }}
-            className='mb-12 flex justify-center'
-          >
-            <motion.div
-              className='rounded-xl border border-gray-200 bg-white px-8 py-4 shadow-sm'
-              whileHover={{
-                scale: 1.05,
-                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)'
-              }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className='text-center'>
-                <motion.div
-                  className='text-3xl font-bold text-blue-600'
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.4, type: 'spring', stiffness: 200 }}
-                >
-                  {quizzes.length}
-                </motion.div>
-                <div className='text-sm font-medium text-gray-600'>Available Quizzes</div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-
         {/* Quizzes Grid */}
         <motion.div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' layout>
-          {loading ? (
-            // Loading skeletons
-            Array.from({ length: 8 }).map((_, index) => <QuizCardSkeleton key={index} index={index} />)
-          ) : quizzes.length > 0 ? (
-            // Actual quiz cards
-            quizzes.map((quiz, index) => <QuizCard key={quiz.id} quiz={quiz} index={index} />)
-          ) : (
-            // Empty state
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className='col-span-full py-16 text-center'
-            >
-              <motion.div
-                className='mb-4 text-6xl'
-                animate={{
-                  rotate: [0, -10, 10, -10, 0],
-                  scale: [1, 1.1, 1]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  repeatDelay: 3
-                }}
-              >
-                📝
-              </motion.div>
-              <h3 className='mb-2 text-2xl font-bold text-gray-900'>No Quizzes Available</h3>
-              <p className='mx-auto max-w-md text-gray-600'>
-                There are no published quizzes in this category yet. Check back later for new content!
-              </p>
-            </motion.div>
-          )}
+          {loading
+            ? // Loading skeletons
+              Array.from({ length: 8 }).map((_, index) => <QuizCardSkeleton key={index} index={index} />)
+            : // Actual quiz cards
+              quizzes?.map((quiz, index) => <QuizCard key={quiz.id} quiz={quiz} index={index} />)}
         </motion.div>
 
         {/* Back to Home Button */}

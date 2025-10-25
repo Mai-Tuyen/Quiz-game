@@ -11,6 +11,9 @@ import Timer from '@/components/quiz/Timer'
 import NavigationControls from '@/components/quiz/NavigationControls'
 import { useRouter } from 'next/navigation'
 import { storage } from '@/utils/supabase/storage'
+import { createClient } from '@/utils/supabase/client'
+import { User } from '@supabase/supabase-js'
+import { LoginModal } from '@/app/auth/login/ModalLogin'
 
 interface Question {
   id: string
@@ -40,12 +43,11 @@ interface Quiz {
   question_count: number
 }
 
-const user = storage.get('user')
-
 export default function QuizDetailPage() {
   const params = useParams()
   const router = useRouter()
   const quizSlug = params.slug as string
+  const supabase = createClient()
 
   const [quiz, setQuiz] = useState<Quiz | null>(null)
   const [loading, setLoading] = useState(true)
@@ -58,6 +60,42 @@ export default function QuizDetailPage() {
   const [attemptId, setAttemptId] = useState<string | null>(null)
   const [quizStartTime, setQuizStartTime] = useState<Date | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+
+  // Check authentication first
+  useEffect(() => {
+    const checkAuth = async () => {
+      const {
+        data: { session }
+      } = await supabase.auth.getSession()
+
+      if (!session?.user) {
+        setAuthLoading(false)
+        return
+      }
+
+      setUser(session.user)
+      setAuthLoading(false)
+    }
+
+    checkAuth()
+
+    // Listen for auth changes
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' && session?.user) {
+        setUser(session.user)
+        // Force a re-render by updating the user state
+        setAuthLoading(false)
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase])
 
   useEffect(() => {
     async function fetchQuiz() {
@@ -80,18 +118,16 @@ export default function QuizDetailPage() {
       }
     }
 
-    if (quizSlug) {
+    if (quizSlug && user) {
       fetchQuiz()
     }
-  }, [quizSlug])
+  }, [quizSlug, user])
 
   const startQuiz = async () => {
     try {
-      const userId = user?.id
+      if (!quiz || !user?.id) return
 
-      if (!quiz) return
-
-      const newAttemptId = await createQuizAttempt(quiz.id, userId as string)
+      const newAttemptId = await createQuizAttempt(quiz.id, user?.id)
       setAttemptId(newAttemptId)
       setQuizStartTime(new Date())
       setIsQuizStarted(true)
@@ -160,7 +196,7 @@ export default function QuizDetailPage() {
     }
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className='flex min-h-screen items-center justify-center bg-gray-50'>
         <motion.div
@@ -177,25 +213,13 @@ export default function QuizDetailPage() {
     )
   }
 
-  if (error) {
-    return (
-      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-          className='text-center'
-        >
-          <div className='mb-4 text-6xl'>😞</div>
-          <h1 className='mb-2 text-2xl font-bold text-gray-900'>Oops!</h1>
-          <p className='text-gray-600'>{error}</p>
-        </motion.div>
-      </div>
-    )
-  }
-
   if (!quiz) {
     return null
+  }
+
+  if (!user && !authLoading) {
+    // redirect to home
+    router.push('/')
   }
 
   // Quiz start screen

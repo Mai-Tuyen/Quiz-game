@@ -1,13 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc'
@@ -17,35 +11,30 @@ import { createClient } from '@/utils/supabase/client'
 interface LoginModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  title: string
+  nextUrl?: string
 }
 
-export function LoginModal({
-  open,
-  onOpenChange
-}: LoginModalProps) {
+export function LoginModal({ open, onOpenChange, title, nextUrl = '/' }: LoginModalProps) {
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true)
-      const { data, error } =
-        await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-            scopes:
-              'https://www.googleapis.com/auth/userinfo.email'
-          }
-        })
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${nextUrl}`,
+          scopes: 'https://www.googleapis.com/auth/userinfo.email'
+        }
+      })
 
       if (error) {
         throw error
       }
     } catch (error: any) {
-      toast.error(
-        error.message || 'An error occurred during sign-in'
-      )
+      toast.error(error.message || 'An error occurred during sign-in')
     } finally {
       setIsLoading(false)
     }
@@ -56,13 +45,8 @@ export function LoginModal({
       <DialogContent className='border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl sm:max-w-md'>
         <DialogHeader className='space-y-3 text-center'>
           <DialogTitle className='flex flex-col items-center justify-center gap-2 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent'>
-            <Image
-              src='/images/logo.png'
-              alt='Logo'
-              width={30}
-              height={30}
-            />
-            Welcome to ZoloQuiz
+            <Image src='/images/logo.png' alt='Logo' width={30} height={30} />
+            {title}
           </DialogTitle>
         </DialogHeader>
 
@@ -90,15 +74,12 @@ export function LoginModal({
               <div className='w-full border-t border-slate-200' />
             </div>
             <div className='relative flex justify-center text-xs uppercase'>
-              <span className='bg-white/80 px-2 text-slate-500'>
-                Secure Authentication
-              </span>
+              <span className='bg-white/80 px-2 text-slate-500'>Secure Authentication</span>
             </div>
           </div>
 
           <p className='px-4 text-center text-xs text-slate-500'>
-            By continuing, you agree to our Terms of Service
-            and Privacy Policy
+            By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>
       </DialogContent>

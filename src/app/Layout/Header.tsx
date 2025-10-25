@@ -120,7 +120,7 @@ export default function Header() {
           </nav>
         </div>
       </div>
-      <LoginModal open={open} onOpenChange={handleOpenModalLogin} />
+      <LoginModal title='Welcome to ZoloQuiz' open={open} onOpenChange={handleOpenModalLogin} />
     </header>
   )
 }
