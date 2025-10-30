@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Category } from '@/lib/database/categories'
+import { Category } from '@/global/lib/database/categories'
 
 interface CategoryCardProps {
   category: Category

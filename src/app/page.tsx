@@ -1,8 +1,8 @@
-import { createClient } from '@/utils/supabase/server'
-import CategoryCard from '@/components/CategoryCard'
+import { createClient } from '@/global/utils/supabase/server'
+import CategoryCard from '@/global/components/CategoryCard'
 import Link from 'next/link'
-import TypeQuote from '@/components/home/TypeQuote'
-import FullPageClient from '@/components/common/FullPageClient'
+import TypeQuote from '@/global/components/home/TypeQuote'
+import FullPageClient from '@/global/components/common/FullPageClient'
 import Footer from '@/app/Layout/Footer'
 
 export const metadata = {

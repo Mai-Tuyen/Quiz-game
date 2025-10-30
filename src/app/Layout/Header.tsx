@@ -2,13 +2,18 @@
 
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { createClient } from '../../utils/supabase/client'
+import { createClient } from '../../global/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
-import { storage } from '@/utils/supabase/storage'
+import { storage } from '@/global/utils/supabase/storage'
 import { LoginModal } from '@/app/auth/login/ModalLogin'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@/global/components/ui/dropdown-menu'
+import { cn } from '@/global/lib/utils'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)

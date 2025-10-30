@@ -1,12 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/global/components/ui/dialog'
+import { Button } from '@/global/components/ui/button'
 import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc'
 import { toast } from 'react-toastify'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/global/utils/supabase/client'
 
 interface LoginModalProps {
   open: boolean

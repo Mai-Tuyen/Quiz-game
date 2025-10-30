@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/global/utils/supabase/client'
 
 export interface Quiz {
   id: string

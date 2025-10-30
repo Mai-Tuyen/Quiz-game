@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import confetti from 'canvas-confetti'
-import { getAttemptWithResults, AttemptWithDetails } from '@/lib/database/attempts'
-import ScoreDisplay from '@/components/results/ScoreDisplay'
-import QuestionReviewMatrix from '@/components/results/QuestionReviewMatrix'
-import FireworksAnimation from '@/components/results/FireworksAnimation'
+import { getAttemptWithResults, AttemptWithDetails } from '@/global/lib/database/attempts'
+import ScoreDisplay from '@/global/components/results/ScoreDisplay'
+import QuestionReviewMatrix from '@/global/components/results/QuestionReviewMatrix'
+import FireworksAnimation from '@/global/components/results/FireworksAnimation'
 
 export default function QuizResultPage() {
   const params = useParams()

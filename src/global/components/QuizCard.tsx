@@ -2,10 +2,10 @@
 
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { Quiz } from '@/lib/database/quizzes'
+import { Quiz } from '@/global/lib/database/quizzes'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '@/global/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import { LoginModal } from '@/app/auth/login/ModalLogin'
 import { useRouter } from 'next/navigation'
@@ -123,7 +123,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
           <div className='p-6'>
             {/* Title */}
             <motion.h3
-              className='mb-2 line-clamp-2 text-lg font-semibold text-gray-900 transition-colors duration-200 group-hover:text-blue-600'
+              className='group-hover:text-primary mb-2 line-clamp-2 text-lg font-semibold text-gray-900 transition-colors duration-200'
               whileHover={{ x: 2 }}
               transition={{ duration: 0.2 }}
             >
@@ -131,7 +131,9 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
             </motion.h3>
 
             {/* Description */}
-            <p className='mb-4 truncate text-sm leading-relaxed text-gray-600'>{quiz.description}</p>
+            <p title={quiz.description} className='mb-4 truncate text-sm leading-relaxed text-gray-600'>
+              {quiz.description}
+            </p>
 
             {/* Stats */}
             <div className='mb-4 flex items-center justify-between'>
@@ -183,7 +185,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
               </div>
 
               <motion.div
-                className='flex items-center text-sm font-medium text-blue-600'
+                className='text-primary flex items-center text-sm font-medium'
                 whileHover={{ x: 4 }}
                 transition={{ duration: 0.2 }}
               >

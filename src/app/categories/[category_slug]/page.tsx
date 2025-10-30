@@ -3,10 +3,10 @@
 import { Suspense, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { useParams } from 'next/navigation'
-import { getCategoryBySlug } from '@/lib/database/categories'
-import { getQuizzesByCategory, Quiz } from '@/lib/database/quizzes'
-import QuizCard from '@/components/QuizCard'
-import QuizCardSkeleton from '@/components/QuizCardSkeleton'
+import { getCategoryBySlug } from '@/global/lib/database/categories'
+import { getQuizzesByCategory, Quiz } from '@/global/lib/database/quizzes'
+import QuizCard from '@/global/components/QuizCard'
+import QuizCardSkeleton from '@/global/components/QuizCardSkeleton'
 
 interface Category {
   id: string
