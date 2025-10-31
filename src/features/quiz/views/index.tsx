@@ -36,7 +36,6 @@ export default function QuizDetailView() {
 
   const { data: quiz, isLoading: isQuizLoading, error: quizError } = useGetQuizWithQuestionsQuery(quizSlug)
   const timeRemaining = quiz?.time_limit * 60
-  console.log('quiz', quiz)
   // Check authentication first
   useEffect(() => {
     const checkAuth = async () => {
