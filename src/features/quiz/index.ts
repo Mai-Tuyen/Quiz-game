@@ -1,1 +1,5 @@
 export { default as QuizDetailView } from './views'
+export { default as QuizCardSkeleton } from './views/components/QuizCardSkeleton'
+export { default as QuizCard } from './views/components/QuizCard'
+export { getQuizzesByCategoryAPI } from './api'
+export type { Quiz } from './type'

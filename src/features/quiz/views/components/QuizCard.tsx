@@ -7,7 +7,7 @@ import Image from 'next/image'
 import { useState, useEffect } from 'react'
 import { createClient } from '@/global/utils/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { LoginModal } from '@/app/auth/login/ModalLogin'
+import { LoginModal } from '@/features/auth/login/ModalLogin'
 import { useRouter } from 'next/navigation'
 interface QuizCardProps {
   quiz: Quiz

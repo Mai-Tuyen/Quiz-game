@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
-import { createClient } from '../../global/utils/supabase/client'
+import { createClient } from '../../utils/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
 import { storage } from '@/global/utils/supabase/storage'
-import { LoginModal } from '@/app/auth/login/ModalLogin'
+import { LoginModal } from '@/features/auth/login/ModalLogin'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,9 +87,7 @@ export default function Header() {
             </Link>
           </div>
           <nav className='hidden shrink-0 items-center space-x-6 md:flex'>
-            {loading ? (
-              <div className='h-6 w-6 animate-spin rounded-full border-2 border-gray-300 border-t-blue-600'></div>
-            ) : user ? (
+            {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger className='cursor-pointer'>
                   <div className='flex items-center space-x-2 rounded-full border border-gray-200 p-1 px-2'>

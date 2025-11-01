@@ -1,8 +1,8 @@
+import { Quiz } from '@/features/quiz/type'
 import { createClient } from '@/global/utils/supabase/client'
 
-export async function getQuizzesByCategory(categorySlug: string): Promise<Quiz[]> {
+export async function getQuizzesByCategoryAPI(categorySlug: string): Promise<Quiz[]> {
   const supabase = createClient()
-
   const { data, error } = await supabase
     .from('quizzes')
     .select(
