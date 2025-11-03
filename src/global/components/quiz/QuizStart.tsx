@@ -1,5 +1,5 @@
 import { Quiz } from '@/global/lib/database/quizzes'
-import { createClient } from '@/global/utils/supabase/client'
+import { createClient } from '@/global/lib/supabase/client'
 import { motion } from 'framer-motion'
 import React, { useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'

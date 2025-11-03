@@ -6,7 +6,7 @@ import { Button } from '@/global/components/ui/button'
 import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc'
 import { toast } from 'react-toastify'
-import { createClient } from '@/global/utils/supabase/client'
+import { createClient } from '@/global/lib/supabase/client'
 
 interface LoginModalProps {
   open: boolean

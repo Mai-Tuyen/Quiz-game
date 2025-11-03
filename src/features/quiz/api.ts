@@ -1,5 +1,5 @@
 import { Quiz } from '@/features/quiz/type'
-import { createClient } from '@/global/utils/supabase/client'
+import { createClient } from '@/global/lib/supabase/client'
 
 export async function getQuizzesByCategoryAPI(categorySlug: string): Promise<Quiz[]> {
   const supabase = createClient()

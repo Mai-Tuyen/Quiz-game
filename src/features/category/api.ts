@@ -1,5 +1,5 @@
 import { Category } from '@/features/category/type'
-import { createClient } from '@/global/utils/supabase/server'
+import { createClient } from '@/global/lib/supabase/server'
 
 export async function getCategoriesAPI(): Promise<Category[]> {
   const supabase = await createClient()

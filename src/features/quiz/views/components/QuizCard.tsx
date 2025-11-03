@@ -5,9 +5,8 @@ import Link from 'next/link'
 import { Quiz } from '@/global/lib/database/quizzes'
 import Image from 'next/image'
 import { useState, useEffect } from 'react'
-import { createClient } from '@/global/utils/supabase/client'
+import { createClient } from '@/global/lib/supabase/client'
 import { User } from '@supabase/supabase-js'
-import { LoginModal } from '@/features/auth/login/ModalLogin'
 import { useRouter } from 'next/navigation'
 interface QuizCardProps {
   quiz: Quiz
@@ -31,56 +30,16 @@ const difficultyLabels = {
 }
 
 export default function QuizCard({ quiz, index }: QuizCardProps) {
-  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const [showLoginModal, setShowLoginModal] = useState(false)
-  const supabase = createClient()
   const router = useRouter()
 
   const difficultyClass =
     difficultyColors[quiz.difficulty_level as keyof typeof difficultyColors] || difficultyColors[3]
   const difficultyLabel = difficultyLabels[quiz.difficulty_level as keyof typeof difficultyLabels] || 'Medium'
 
-  useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      const {
-        data: { session }
-      } = await supabase.auth.getSession()
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }
-
-    getInitialSession()
-
-    // Listen for auth changes
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null)
-      setLoading(false)
-
-      // If user just signed in and login modal was open, redirect to quiz
-      if (event === 'SIGNED_IN' && session?.user && showLoginModal) {
-        setShowLoginModal(false)
-        router.push(`/quizzes/${quiz.slug}`)
-      }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [supabase, showLoginModal, quiz.slug, router])
-
   const handleQuizClick = (e: React.MouseEvent) => {
     e.preventDefault()
-
-    if (loading) return
-
-    if (!user) {
-      setShowLoginModal(true)
-    } else {
-      // User is authenticated, proceed to quiz
-      router.push(`/quizzes/${quiz.slug}`)
-    }
+    router.push(`/quizzes/${quiz.slug}`)
   }
 
   return (
@@ -205,15 +164,6 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
           </div>
         </motion.div>
       </div>
-
-      <LoginModal
-        title='Login to continue'
-        open={showLoginModal}
-        onOpenChange={(open) => {
-          setShowLoginModal(open)
-        }}
-        nextUrl={`/quizzes/${quiz.slug}`}
-      />
     </motion.div>
   )
 }

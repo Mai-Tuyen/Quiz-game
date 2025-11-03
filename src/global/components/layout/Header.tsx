@@ -1,12 +1,11 @@
 'use client'
 
-import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { createClient } from '../../utils/supabase/client'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
+import { createClient } from '../../lib/supabase/client'
 import { User } from '@supabase/supabase-js'
 import Image from 'next/image'
-import { storage } from '@/global/utils/supabase/storage'
-import { LoginModal } from '@/features/auth/login/ModalLogin'
+import { storage } from '@/global/lib/storage'
+import { LoginModal } from '@/features/auth/views/login/ModalLogin'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,21 +13,22 @@ import {
   DropdownMenuTrigger
 } from '@/global/components/ui/dropdown-menu'
 import { cn } from '@/global/lib/utils'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
   const supabase = createClient()
-  const [open, setOpen] = useState(false)
   const [isAtTop, setIsAtTop] = useState(true)
-  useEffect(() => {
+
+  useLayoutEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
       const {
         data: { session }
       } = await supabase.auth.getSession()
+      debugger
       setUser(session?.user ?? null)
       storage.set('user', session?.user ?? null)
-      setLoading(false)
     }
 
     getInitialSession()
@@ -38,7 +38,6 @@ export default function Header() {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
-      setLoading(false)
     })
 
     return () => subscription.unsubscribe()
@@ -55,10 +54,6 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
-  }
-
-  const handleOpenModalLogin = (open: boolean) => {
-    setOpen(open)
   }
 
   return (
@@ -113,8 +108,7 @@ export default function Header() {
               </DropdownMenu>
             ) : (
               <Link
-                href='#'
-                onClick={() => handleOpenModalLogin(true)}
+                href='/auth/login'
                 className='text-primary rounded-md border-1 border-gray-500 px-4 py-1 font-bold shadow-md transition-all duration-300 hover:scale-105'
               >
                 Login
@@ -123,7 +117,6 @@ export default function Header() {
           </nav>
         </div>
       </div>
-      <LoginModal title='Welcome to ZoloQuiz' open={open} onOpenChange={handleOpenModalLogin} />
     </header>
   )
 }

@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import '@/global/globals.css'
 import Header from '@/global/components/layout/Header'
 import Footer from '@/global/components/layout/Footer'
-import TanstackQueryProvider from '@/global/providers/TanstackqueryProvider'
+import TanstackQueryProvider from '@/global/lib/providers/TanstackqueryProvider'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin']
