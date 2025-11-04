@@ -44,12 +44,13 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsAtTop(window.scrollY <= 0)
+      // check animation header just on home page
+      setIsAtTop(window.scrollY <= 0 && window.location.pathname === '/')
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [window.location.pathname])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

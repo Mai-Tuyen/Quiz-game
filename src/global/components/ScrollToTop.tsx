@@ -1,0 +1,16 @@
+'use client'
+import { useEffect } from 'react'
+import { usePathname } from 'next/navigation'
+
+export default function ScrollToTop() {
+  const pathname = usePathname()
+
+  useEffect(() => {
+    // except login modal page
+    if (!pathname.startsWith('/auth/login')) {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [pathname])
+
+  return null
+}
