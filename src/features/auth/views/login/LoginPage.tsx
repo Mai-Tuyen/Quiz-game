@@ -35,7 +35,7 @@ export function LoginPage({ nextUrl }: ILoginPageProps) {
 
   return (
     <div className='mx-auto flex h-screen w-full items-center justify-center p-3 shadow-2xl'>
-      <div className='w-full max-w-md'>
+      <div className='w-full max-w-md rounded-lg border border-slate-200 bg-gray-50 p-5 shadow-2xl'>
         <div className='space-y-3 text-center'>
           <div className='flex flex-col items-center justify-center gap-2 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent'>
             <Image src='/images/logo.png' alt='Logo' width={30} height={30} />

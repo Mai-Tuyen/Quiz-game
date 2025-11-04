@@ -26,11 +26,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <TanstackQueryProvider>
-          <Header />
-          {children}
-          <Footer />
-        </TanstackQueryProvider>
+        <TanstackQueryProvider>{children}</TanstackQueryProvider>
       </body>
     </html>
   )
