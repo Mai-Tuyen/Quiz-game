@@ -2,13 +2,14 @@
 import { Button } from '@/global/components/ui/button'
 import { createClient } from '@/global/lib/supabase/client'
 import Image from 'next/image'
+import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { toast } from 'react-toastify'
-type ILoginPageProps = {
-  nextUrl: string
-}
-export function LoginPage({ nextUrl }: ILoginPageProps) {
+
+export function LoginPage() {
+  const searchParams = useSearchParams()
+  const nextUrl = searchParams.get('next')
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
 

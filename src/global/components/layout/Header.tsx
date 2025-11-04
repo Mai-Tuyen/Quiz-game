@@ -26,7 +26,6 @@ export default function Header() {
       const {
         data: { session }
       } = await supabase.auth.getSession()
-      debugger
       setUser(session?.user ?? null)
       storage.set('user', session?.user ?? null)
     }

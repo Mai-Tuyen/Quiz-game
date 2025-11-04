@@ -5,7 +5,7 @@ export const middleware = async (request: NextRequest) => {
   const { pathname, searchParams } = request.nextUrl
 
   // Define public routes
-  const publicRoutes = ['/', '/auth/callback', '/error', '/not-found', '/categories/*']
+  const publicRoutes = ['/', '/auth/callback', '/auth/login', '/error', '/not-found', '/categories/*']
   const isCategoryRoute = pathname.startsWith('/categories/')
 
   // Check if route is public or already has login parameter (to prevent redirect loop)
@@ -13,6 +13,7 @@ export const middleware = async (request: NextRequest) => {
 
   // Allow public routes or routes with login parameter without authentication
   if (isPublicRoute) {
+    console.log('isPublicRoute', isPublicRoute)
     return NextResponse.next()
   }
 
@@ -23,10 +24,13 @@ export const middleware = async (request: NextRequest) => {
   } = await supabase.auth.getSession()
 
   // If not authenticated, redirect to current URL with login modal trigger
-  // if (!session) {
-  //   const url = request.nextUrl.clone()
-  //   return NextResponse.redirect(url)
-  // }
+  if (!session) {
+    console.log('redirecting to login modal')
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/login'
+    url.searchParams.set('next', request.nextUrl.pathname)
+    return NextResponse.redirect(url)
+  }
 
   return NextResponse.next()
 }

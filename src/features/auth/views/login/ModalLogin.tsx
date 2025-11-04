@@ -7,18 +7,15 @@ import Image from 'next/image'
 import { FcGoogle } from 'react-icons/fc'
 import { toast } from 'react-toastify'
 import { createClient } from '@/global/lib/supabase/client'
+import { useRouter, useSearchParams } from 'next/navigation'
 
-interface LoginModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: string
-  nextUrl?: string
-}
-
-export function LoginModal({ open, onOpenChange, title, nextUrl = '/' }: LoginModalProps) {
+export function LoginModal() {
+  const searchParams = useSearchParams()
+  const nextUrl = searchParams.get('next')
+  const [open, setOpen] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
-
+  const router = useRouter()
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true)
@@ -40,13 +37,18 @@ export function LoginModal({ open, onOpenChange, title, nextUrl = '/' }: LoginMo
     }
   }
 
+  const handleOpenChange = (open: boolean) => {
+    setOpen(open)
+    router.back()
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className='border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl sm:max-w-md'>
         <DialogHeader className='space-y-3 text-center'>
           <DialogTitle className='flex flex-col items-center justify-center gap-2 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent'>
             <Image src='/images/logo.png' alt='Logo' width={30} height={30} />
-            {title}
+            Welcome to Zolo Quiz
           </DialogTitle>
         </DialogHeader>
 

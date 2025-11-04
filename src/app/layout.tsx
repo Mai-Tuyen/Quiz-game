@@ -15,18 +15,23 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'ZolQuiz - Quiz Game',
-  description: 'ZolQuiz is a quiz game that allows you to test your knowledge in various categories.'
+  title: 'ZoloQuiz',
+  description: 'ZoloQuiz is a quiz game that allows you to test your knowledge in various categories.'
 }
 export default function RootLayout({
-  children
+  children,
+  modalLogin
 }: Readonly<{
   children: React.ReactNode
+  modalLogin: React.ReactNode
 }>) {
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <TanstackQueryProvider>{children}</TanstackQueryProvider>
+        <TanstackQueryProvider>
+          {children}
+          {modalLogin}
+        </TanstackQueryProvider>
       </body>
     </html>
   )
