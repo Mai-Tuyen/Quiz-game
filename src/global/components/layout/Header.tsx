@@ -13,12 +13,13 @@ import {
   DropdownMenuTrigger
 } from '@/global/components/ui/dropdown-menu'
 import { cn } from '@/global/lib/utils'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, usePathname } from 'next/navigation'
 import Link from 'next/link'
 export default function Header() {
   const [user, setUser] = useState<User | null>(null)
   const supabase = createClient()
   const [isAtTop, setIsAtTop] = useState(true)
+  const pathname = usePathname()
 
   useLayoutEffect(() => {
     // Get initial session
@@ -43,14 +44,15 @@ export default function Header() {
   }, [supabase])
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
     const handleScroll = () => {
       // check animation header just on home page
-      setIsAtTop(window.scrollY <= 0 && window.location.pathname === '/')
+      setIsAtTop(window.scrollY <= 0 && pathname === '/')
     }
     handleScroll()
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [window.location.pathname])
+  }, [pathname])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
