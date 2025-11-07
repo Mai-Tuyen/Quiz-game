@@ -1,4 +1,4 @@
-import { Quiz } from '@/features/quiz/type'
+import { Quiz, QuizStartInfo } from '@/features/quiz/type'
 import { createClient } from '@/global/lib/supabase/client'
 
 export async function getQuizzesByCategoryAPI(categorySlug: string): Promise<Quiz[]> {
@@ -59,5 +59,32 @@ export async function getQuizWithQuestionsAPI(slug: string) {
     ...data,
     questions: sortedQuestions,
     question_count: sortedQuestions.length
+  }
+}
+
+export async function getQuizStartInfoAPI(slug: string): Promise<QuizStartInfo> {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('quizzes')
+    .select(
+      `
+      *,
+      category:categories(*),
+      question_count: questions(count)
+    `
+    )
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .single()
+
+  if (error) {
+    console.error('Error fetching quiz info:', error)
+    throw new Error(`Failed to fetch quiz info: ${error.message}`)
+  }
+
+  // Transform the data to include question count
+  return {
+    ...data,
+    question_count: data.question_count?.[0]?.count || 0
   }
 }

@@ -1,3 +1,5 @@
+import { Category } from '@/features/category'
+
 export type Quiz = {
   id: string
   title: string
@@ -28,4 +30,20 @@ export type Question = {
   points: number
   explanation: string
   question_data: any
+}
+
+export type QuizStartInfo = {
+  id: string
+  title: string
+  slug: string
+  description: string
+  category_id: string
+  time_limit: number
+  difficulty_level: number
+  is_published: boolean
+  created_at: string
+  updated_at: string
+  image_url: string
+  category: Category
+  question_count: number
 }
