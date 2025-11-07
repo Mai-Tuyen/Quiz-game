@@ -1,6 +1,7 @@
 import { QuizStartInfo } from '@/features/quiz'
-import { useGetQuizInfoQuery } from '@/features/quiz/hooks/query'
+import { Params } from '@/global/type'
 
-export default function QuizInfoPage({ params }: { params: { slug: string } }) {
-  return <QuizStartInfo slug={params.slug} />
+export default async function QuizInfoPage({ params }: { params: Params }) {
+  const { slug } = await params
+  return <QuizStartInfo slug={slug} />
 }

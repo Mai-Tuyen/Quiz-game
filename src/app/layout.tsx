@@ -5,6 +5,7 @@ import Header from '@/global/components/layout/Header'
 import Footer from '@/global/components/layout/Footer'
 import TanstackQueryProvider from '@/global/lib/providers/TanstackqueryProvider'
 import ScrollToTop from '@/global/components/ScrollToTop'
+import ErrorBoundaryProvider from '@/global/lib/providers/ErrorBoundary'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin']
@@ -29,11 +30,13 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <TanstackQueryProvider>
-          <ScrollToTop />
-          {children}
-          {modalLogin}
-        </TanstackQueryProvider>
+        <ErrorBoundaryProvider>
+          <TanstackQueryProvider>
+            <ScrollToTop />
+            {children}
+            {modalLogin}
+          </TanstackQueryProvider>
+        </ErrorBoundaryProvider>
       </body>
     </html>
   )
