@@ -47,3 +47,14 @@ export type QuizStartInfo = {
   category: Category
   question_count: number
 }
+export interface QuizAttempt {
+  id: string
+  user_id: string
+  quiz_id: string
+  start_time: string
+  end_time: string | null
+  score: number
+  max_score: number
+  is_completed: boolean
+  time_taken: number // in seconds
+}

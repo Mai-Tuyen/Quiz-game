@@ -1,5 +1,7 @@
 import { Quiz, QuizStartInfo } from '@/features/quiz/type'
+import { QuizAttempt } from '@/global/lib/database/attempts'
 import { createClient } from '@/global/lib/supabase/client'
+import dayjs from 'dayjs'
 
 export async function getQuizzesByCategoryAPI(categorySlug: string): Promise<Quiz[]> {
   const supabase = createClient()
@@ -17,8 +19,7 @@ export async function getQuizzesByCategoryAPI(categorySlug: string): Promise<Qui
     .order('created_at', { ascending: false })
 
   if (error) {
-    console.error('Error fetching quizzes by category:', error)
-    throw new Error(`Failed to fetch quizzes: ${error.message}`)
+    throw error
   }
 
   // Transform the data to include question count
@@ -48,8 +49,7 @@ export async function getQuizWithQuestionsAPI(slug: string) {
     if (error.code === 'PGRST116') {
       return null
     }
-    console.error('Error fetching quiz with questions:', error)
-    throw new Error(`Failed to fetch quiz: ${error.message}`)
+    throw error
   }
 
   // Sort questions by order
@@ -86,4 +86,45 @@ export async function getQuizStartInfoAPI(slug: string): Promise<QuizStartInfo> 
     ...data,
     question_count: data.question_count?.[0]?.count || 0
   }
+}
+
+export async function getCurrentQuizAttemptAPI(quizId: string): Promise<Partial<QuizAttempt>> {
+  const supabase = createClient()
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+  const { data, error } = await supabase
+    .from('quiz_attempts')
+    .select(`id, start_time, is_completed`)
+    .eq('quiz_id', quizId)
+    .eq('user_id', session?.user?.id)
+    .eq('is_completed', false)
+    .limit(1)
+  // .single()
+
+  if (error) {
+    throw error
+  }
+
+  return data?.[0] || null
+}
+
+export async function createQuizAttemptAPI(quizId: string, userId: string): Promise<string> {
+  const supabase = createClient()
+
+  const { data, error } = await supabase
+    .from('quiz_attempts')
+    .insert({
+      user_id: userId,
+      quiz_id: quizId,
+      start_time: dayjs().toISOString(),
+      is_completed: false
+    })
+    .select('id')
+    .single()
+
+  if (error) {
+    throw error
+  }
+  return data.id
 }

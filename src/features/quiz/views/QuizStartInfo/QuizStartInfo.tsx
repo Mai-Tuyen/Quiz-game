@@ -1,12 +1,27 @@
 'use client'
-import { useGetQuizStartInfoQuery } from '@/features/quiz/hooks/query'
+import { useCreateQuizAttemptMutation, useGetQuizStartInfoQuery } from '@/features/quiz/hooks/query'
+import { storage } from '@/global/lib/storage'
+import { createClient } from '@/global/lib/supabase/client'
 import { motion } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 type IProps = {
   slug: string
 }
 export default function QuizStartInfo({ slug }: IProps) {
+  const router = useRouter()
   const { data: quizStartInfo } = useGetQuizStartInfoQuery(slug)
-  const handleStartQuiz = () => {}
+  const { mutate: createQuizAttempt } = useCreateQuizAttemptMutation()
+  const userId = storage.get('user')?.id
+  const handleStartQuiz = () => {
+    createQuizAttempt(
+      { quizId: quizStartInfo?.id ?? '', userId: userId ?? '' },
+      {
+        onSuccess: () => {
+          router.push(`/quizzes/${slug}`)
+        }
+      }
+    )
+  }
   return (
     <div className='flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-purple-50 p-4'>
       <motion.div
@@ -43,7 +58,7 @@ export default function QuizStartInfo({ slug }: IProps) {
 
         <motion.button
           onClick={handleStartQuiz}
-          className='bg-primary rounded-xl px-8 py-3 text-lg font-semibold text-white transition-colors duration-200 hover:bg-blue-700'
+          className='bg-primary cursor-pointer rounded-xl px-8 py-3 text-lg font-semibold text-white transition-colors duration-200'
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >

@@ -1,12 +1,11 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { useGetCurrentQuizAttemptQuery } from '@/features/quiz/hooks/query'
+import Timer from '@/features/quiz/views/components/Timer'
 import { Quiz } from '@/global/lib/database/quizzes'
+import dayjs from 'dayjs'
+import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
-import { createClient } from '@/global/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
 import { useRouter } from 'next/navigation'
 interface QuizCardProps {
   quiz: Quiz
@@ -30,14 +29,22 @@ const difficultyLabels = {
 }
 
 export default function QuizCard({ quiz, index }: QuizCardProps) {
-  const [loading, setLoading] = useState(true)
   const router = useRouter()
-
+  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id)
+  const endTime = currentAttempt?.start_time
+    ? dayjs(currentAttempt.start_time).add(quiz.time_limit, 'minutes').toISOString()
+    : null
+  const remainingTime = endTime ? dayjs(endTime).diff(dayjs(), 'second') : null
   const difficultyClass =
     difficultyColors[quiz.difficulty_level as keyof typeof difficultyColors] || difficultyColors[3]
   const difficultyLabel = difficultyLabels[quiz.difficulty_level as keyof typeof difficultyLabels] || 'Medium'
 
-  const handleQuizClick = (e: React.MouseEvent) => {
+  const handleStartQuiz = (e: React.MouseEvent) => {
+    e.preventDefault()
+    router.push(`/quizzes/${quiz.slug}/info`)
+  }
+
+  const handleContinueQuiz = (e: React.MouseEvent) => {
     e.preventDefault()
     router.push(`/quizzes/${quiz.slug}`)
   }
@@ -59,7 +66,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
       whileTap={{ scale: 0.98 }}
       className='group'
     >
-      <div onClick={handleQuizClick} className='block cursor-pointer'>
+      <div onClick={currentAttempt?.id ? handleContinueQuiz : handleStartQuiz} className='block cursor-pointer'>
         <motion.div
           className='h-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl'
           whileHover={{
@@ -93,8 +100,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
             <p title={quiz.description} className='mb-4 truncate text-sm leading-relaxed text-gray-600'>
               {quiz.description}
             </p>
-
-            {/* Stats */}
+            {/* Question Count and Time Limit */}
             <div className='mb-4 flex items-center justify-between'>
               <motion.div
                 className='flex items-center gap-2'
@@ -142,24 +148,28 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
               <div className={`rounded-full border px-3 py-1 text-xs font-medium ${difficultyClass}`}>
                 {difficultyLabel}
               </div>
-
-              <motion.div
-                className='text-primary flex items-center text-sm font-medium'
-                whileHover={{ x: 4 }}
-                transition={{ duration: 0.2 }}
-              >
-                Start Quiz
-                <motion.svg
-                  className='ml-1 h-4 w-4'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                  whileHover={{ x: 2 }}
+              <div className='flex items-center gap-2'>
+                {currentAttempt?.id ? (
+                  <Timer timeRemaining={remainingTime || 0} totalTime={quiz.time_limit * 60} onTimeUp={() => {}} />
+                ) : null}
+                <motion.div
+                  className='text-primary flex items-center text-sm font-medium'
+                  whileHover={{ x: 4 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-                </motion.svg>
-              </motion.div>
+                  {currentAttempt?.id ? 'Continue' : 'Start Quiz'}
+                  <motion.svg
+                    className='ml-1 h-4 w-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                    whileHover={{ x: 2 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+                  </motion.svg>
+                </motion.div>
+              </div>
             </motion.div>
           </div>
         </motion.div>
