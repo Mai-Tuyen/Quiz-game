@@ -78,8 +78,7 @@ export async function getQuizStartInfoAPI(slug: string): Promise<QuizStartInfo> 
     .single()
 
   if (error) {
-    console.error('Error fetching quiz info:', error)
-    throw new Error(`Failed to fetch quiz info: ${error.message}`)
+    throw error
   }
 
   // Transform the data to include question count
