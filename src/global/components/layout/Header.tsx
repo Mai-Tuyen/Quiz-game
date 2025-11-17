@@ -13,9 +13,10 @@ import {
   DropdownMenuTrigger
 } from '@/global/components/ui/dropdown-menu'
 import { cn } from '@/global/lib/utils'
-import { useSearchParams, usePathname } from 'next/navigation'
+import { useSearchParams, usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 export default function Header() {
+  const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const supabase = createClient()
   const [isAtTop, setIsAtTop] = useState(true)
@@ -56,6 +57,8 @@ export default function Header() {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+    storage.remove('user')
+    router.push('/')
   }
 
   return (

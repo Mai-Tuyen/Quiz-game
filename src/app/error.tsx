@@ -24,13 +24,10 @@ export default function Error() {
             </svg>
           </div>
           <h2 className='text-foreground text-3xl font-semibold'>Something Went Wrong</h2>
-          <p className='text-muted-foreground'>
-            We encountered an unexpected error. Please try again or return to the home page.
-          </p>
         </div>
         <Link
           href='/'
-          className='border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center rounded-lg border px-6 py-3 text-base font-medium shadow-sm transition-all duration-300'
+          className='border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center rounded-lg border px-6 py-3 text-base font-medium shadow-sm transition-all duration-300 hover:scale-105'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

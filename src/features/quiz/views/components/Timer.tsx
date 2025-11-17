@@ -63,8 +63,18 @@ export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps
   }
 
   return (
-    <span className={cn('rounded-md bg-gray-500 px-2 py-1 text-sm', getBackgroundColor(), getTimerColor())}>
-      {formatTime(currentTime)}
+    <span className={cn('flex items-center gap-2 rounded-md px-2 py-1 text-sm', getBackgroundColor(), getTimerColor())}>
+      <div className={cn('rounded-lg p-2', getBackgroundColor(), getTimerColor())}>
+        <svg className='size-4 text-gray-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+          />
+        </svg>
+      </div>
+      <span className='text-sm font-bold text-gray-600'>{formatTime(currentTime)}</span>
     </span>
   )
 }

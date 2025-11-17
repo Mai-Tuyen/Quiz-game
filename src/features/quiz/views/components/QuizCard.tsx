@@ -3,6 +3,7 @@
 import { useGetCurrentQuizAttemptQuery } from '@/features/quiz/hooks/query'
 import Timer from '@/features/quiz/views/components/Timer'
 import { Quiz } from '@/global/lib/database/quizzes'
+import { storage } from '@/global/lib/storage'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
@@ -30,7 +31,8 @@ const difficultyLabels = {
 
 export default function QuizCard({ quiz, index }: QuizCardProps) {
   const router = useRouter()
-  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id)
+  const userId = storage.get('user')?.id
+  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id, !!userId)
   const endTime = currentAttempt?.start_time
     ? dayjs(currentAttempt.start_time).add(quiz.time_limit, 'minutes').toISOString()
     : null

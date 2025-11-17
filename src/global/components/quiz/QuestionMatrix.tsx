@@ -55,105 +55,20 @@ export default function QuestionMatrix({
     }
   }
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'current':
-        return (
-          <svg className='h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>
-            <path
-              fillRule='evenodd'
-              d='M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z'
-              clipRule='evenodd'
-            />
-          </svg>
-        )
-      case 'answered':
-        return (
-          <svg className='h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>
-            <path
-              fillRule='evenodd'
-              d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-              clipRule='evenodd'
-            />
-          </svg>
-        )
-      case 'marked':
-        return (
-          <svg className='h-3 w-3' fill='currentColor' viewBox='0 0 20 20'>
-            <path
-              fillRule='evenodd'
-              d='M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z'
-              clipRule='evenodd'
-            />
-          </svg>
-        )
-      default:
-        return null
-    }
-  }
-
-  const answeredCount = questions.filter((q) => answers[q.id] !== undefined && answers[q.id] !== null).length
-  const markedCount = markedForReview.size
-
   return (
     <div className='space-y-6'>
-      {/* Progress Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className='rounded-lg bg-gray-50 p-4'
-      >
-        <h3 className='mb-3 font-semibold text-gray-900'>Progress Overview</h3>
-        <div className='space-y-2 text-sm'>
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Answered:</span>
-            <span className='font-medium text-green-600'>
-              {answeredCount}/{questions.length}
-            </span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Marked for Review:</span>
-            <span className='font-medium text-yellow-600'>{markedCount}</span>
-          </div>
-          <div className='flex justify-between'>
-            <span className='text-gray-600'>Remaining:</span>
-            <span className='font-medium text-gray-600'>{questions.length - answeredCount}</span>
-          </div>
-        </div>
-
-        {/* Progress Bar */}
-        <div className='mt-3'>
-          <div className='h-2 w-full rounded-full bg-gray-200'>
-            <motion.div
-              className='h-2 rounded-full bg-green-500'
-              initial={{ width: 0 }}
-              animate={{
-                width: `${(answeredCount / questions.length) * 100}%`
-              }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
-          <div className='mt-1 text-center text-xs text-gray-500'>
-            {Math.round((answeredCount / questions.length) * 100)}% Complete
-          </div>
-        </div>
-      </motion.div>
-
       {/* Question Grid */}
       <div>
-        <h3 className='mb-3 font-semibold text-gray-900'>Question Navigator</h3>
+        <h3 className='mb-3 font-semibold text-gray-900'>Questions</h3>
         <div className='grid grid-cols-5 gap-2'>
           {questions.map((question, index) => {
             const status = getQuestionStatus(question, index)
             const styles = getStatusStyles(status)
-            const icon = getStatusIcon(status)
-
             return (
               <motion.button
                 key={question.id}
                 onClick={() => onQuestionClick(index)}
-                className={`relative h-12 w-12 rounded-lg border-2 text-sm font-semibold transition-all duration-200 ${styles}`}
+                className={`relative size-10 rounded-lg border-2 text-sm font-semibold transition-all duration-200 ${styles}`}
                 whileHover={{ scale: status !== 'current' ? 1.05 : 1 }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -162,11 +77,6 @@ export default function QuestionMatrix({
               >
                 <div className='flex h-full flex-col items-center justify-center'>
                   <span className='text-xs font-bold'>{index + 1}</span>
-                  {icon && (
-                    <div className='absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-current'>
-                      {icon}
-                    </div>
-                  )}
                 </div>
               </motion.button>
             )
@@ -192,30 +102,9 @@ export default function QuestionMatrix({
             <span className='text-gray-600'>Answered</span>
           </div>
           <div className='flex items-center gap-2'>
-            <div className='h-4 w-4 rounded border bg-yellow-400'></div>
-            <span className='text-gray-600'>Marked for Review</span>
-          </div>
-          <div className='flex items-center gap-2'>
             <div className='h-4 w-4 rounded border border-gray-300 bg-white'></div>
             <span className='text-gray-600'>Not Answered</span>
           </div>
-        </div>
-      </motion.div>
-
-      {/* Quick Stats */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.4 }}
-        className='grid grid-cols-2 gap-3'
-      >
-        <div className='rounded-lg border border-gray-200 bg-white p-3 text-center'>
-          <div className='text-lg font-bold text-blue-600'>{currentQuestionIndex + 1}</div>
-          <div className='text-xs text-gray-500'>Current</div>
-        </div>
-        <div className='rounded-lg border border-gray-200 bg-white p-3 text-center'>
-          <div className='text-lg font-bold text-gray-600'>{questions.length}</div>
-          <div className='text-xs text-gray-500'>Total</div>
         </div>
       </motion.div>
     </div>

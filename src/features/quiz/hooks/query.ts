@@ -20,10 +20,11 @@ export const useGetQuizStartInfoQuery = (slug: string) => {
   })
 }
 
-export const useGetCurrentQuizAttemptQuery = (quizId: string) => {
+export const useGetCurrentQuizAttemptQuery = (quizId: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['current-quiz-attempt', quizId],
-    queryFn: () => getCurrentQuizAttemptAPI(quizId)
+    queryFn: () => getCurrentQuizAttemptAPI(quizId),
+    enabled: enabled
   })
 }
 
