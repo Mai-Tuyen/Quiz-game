@@ -128,3 +128,30 @@ export async function createQuizAttemptAPI(quizId: string, userId: string): Prom
   }
   return data.id
 }
+
+export async function getAllAnswerOfQuizAttemptAPI(attemptId: string) {
+  const supabase = createClient()
+  const { data, error } = await supabase.from('user_answers').select('*').eq('attempt_id', attemptId)
+  if (error) {
+    throw error
+  }
+  return data
+}
+
+export async function upsertUserAnswerAPI(id: string, attemptId: string, questionId: string, selectedOptions: any) {
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('user_answers')
+    .upsert({
+      id: id,
+      attempt_id: attemptId,
+      question_id: questionId,
+      selected_options: selectedOptions
+    })
+    .select()
+    .single()
+  if (error) {
+    throw error
+  }
+  return data
+}

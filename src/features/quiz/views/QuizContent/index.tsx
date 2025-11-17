@@ -1,58 +1,47 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useParams } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { getQuizWithQuestions } from '@/global/lib/database/quizzes'
-import { createQuizAttempt, submitQuizAttempt } from '@/global/lib/database/attempts'
-import QuestionDisplay from '@/global/components/quiz/QuestionDisplay'
-import QuestionMatrix from '@/global/components/quiz/QuestionMatrix'
-import NavigationControls from '@/global/components/quiz/NavigationControls'
-import { useRouter } from 'next/navigation'
+import {
+  useGetAllAnswerOfQuizAttemptQuery,
+  useGetCurrentQuizAttemptQuery,
+  useGetQuizWithQuestionsQuery,
+  useUpsertUserAnswerMutation
+} from '@/features/quiz/hooks/query'
+import NavigationControls from '@/features/quiz/views/QuizContent/NavigationControls'
+import QuestionDisplay from '@/features/quiz/views/QuizContent/QuestionDisplay'
+import QuestionMatrix from '@/features/quiz/views/QuizContent/QuestionMatrix'
+import TimerRight from '@/features/quiz/views/QuizContent/TimerRight'
+import QuizLoading from '@/features/quiz/views/QuizLoading'
+import { submitQuizAttempt } from '@/global/lib/database/attempts'
 import { storage } from '@/global/lib/storage'
 import { createClient } from '@/global/lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import { Quiz } from '@/features/quiz/type'
-import { useGetQuizWithQuestionsQuery } from '@/features/quiz/hooks/query'
-import QuizLoading from '@/features/quiz/views/QuizLoading'
 import dayjs from 'dayjs'
-import TimerRight from '@/features/quiz/views/QuizContent/TimerRight'
+import { motion } from 'framer-motion'
+import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function QuizDetailView() {
+  const userId = typeof window === 'undefined' ? null : storage.get('user')?.id
   const params = useParams()
   const router = useRouter()
   const quizSlug = params.slug as string
-  const supabase = createClient()
-
-  const [error, setError] = useState<string | null>(null)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<Record<string, any>>({})
-  const [markedForReview, setMarkedForReview] = useState<Set<string>>(new Set())
-  const [attemptId, setAttemptId] = useState<string | null>(null)
   const [quizStartTime, setQuizStartTime] = useState<Date | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data: quiz, isLoading: isQuizLoading, error: quizError } = useGetQuizWithQuestionsQuery(quizSlug)
-  const timeStart = dayjs(quiz?.start_time)
+  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz?.id, !!userId && !!quiz?.id)
+  const { data: allAnswers } = useGetAllAnswerOfQuizAttemptQuery(currentAttempt?.id as string, !!currentAttempt?.id)
+  const { mutate: upsertUserAnswer } = useUpsertUserAnswerMutation()
+  const timeStart = dayjs(currentAttempt?.start_time)
   const timeEnd = timeStart.add(quiz?.time_limit, 'minutes')
   const timeRemaining = timeEnd.diff(dayjs(), 'second')
 
   const handleAnswerChange = (questionId: string, answer: any) => {
-    setAnswers((prev) => ({
-      ...prev,
-      [questionId]: answer
-    }))
-  }
-
-  const handleMarkForReview = (questionId: string) => {
-    setMarkedForReview((prev) => {
-      const newSet = new Set(prev)
-      if (newSet.has(questionId)) {
-        newSet.delete(questionId)
-      } else {
-        newSet.add(questionId)
-      }
-      return newSet
+    upsertUserAnswer({
+      id: allAnswers?.find((answer: any) => answer.question_id === questionId)?.id as string,
+      attemptId: currentAttempt?.id as string,
+      questionId: questionId,
+      selectedOptions: answer
     })
   }
 
@@ -73,7 +62,7 @@ export default function QuizDetailView() {
   }
 
   const handleSubmitQuiz = async () => {
-    if (!attemptId || !quizStartTime || isSubmitting) return
+    if (!currentAttempt?.id || !quizStartTime || isSubmitting) return
 
     // Show confirmation dialog
     const confirmed = window.confirm(
@@ -83,16 +72,12 @@ export default function QuizDetailView() {
     if (!confirmed) return
 
     try {
-      setIsSubmitting(true)
-
-      const results = await submitQuizAttempt(attemptId, answers, quizStartTime)
+      const results = await submitQuizAttempt(currentAttempt.id, allAnswers as Record<string, any>, quizStartTime)
 
       // Redirect to results page
-      router.push(`/result/${attemptId}`)
+      router.push(`/result/${currentAttempt.id}`)
     } catch (error) {
       console.error('Error submitting quiz:', error)
-      setError('Failed to submit quiz. Please try again.')
-      setIsSubmitting(false)
     }
   }
 
@@ -130,10 +115,8 @@ export default function QuizDetailView() {
           <div className='flex-1 overflow-y-auto p-6'>
             <QuestionDisplay
               question={currentQuestion}
-              answer={answers[currentQuestion.id]}
+              answer={allAnswers?.find((answer: any) => answer.question_id === currentQuestion.id)?.selected_options}
               onAnswerChange={(answer) => handleAnswerChange(currentQuestion.id, answer)}
-              isMarkedForReview={markedForReview.has(currentQuestion.id)}
-              onMarkForReview={() => handleMarkForReview(currentQuestion.id)}
             />
           </div>
 
@@ -144,8 +127,6 @@ export default function QuizDetailView() {
               totalQuestions={quiz.questions.length}
               onPrevious={handlePrevious}
               onNext={handleNext}
-              isMarkedForReview={markedForReview.has(currentQuestion.id)}
-              onMarkForReview={() => handleMarkForReview(currentQuestion.id)}
             />
           </div>
         </div>
@@ -184,8 +165,7 @@ export default function QuizDetailView() {
               <QuestionMatrix
                 questions={quiz.questions}
                 currentQuestionIndex={currentQuestionIndex}
-                answers={answers}
-                markedForReview={markedForReview}
+                answers={allAnswers as Record<string, any>}
                 onQuestionClick={handleQuestionNavigation}
               />
             </div>

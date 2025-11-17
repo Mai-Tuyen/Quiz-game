@@ -12,8 +12,7 @@ interface Question {
 interface QuestionMatrixProps {
   questions: Question[]
   currentQuestionIndex: number
-  answers: Record<string, any>
-  markedForReview: Set<string>
+  answers: any[]
   onQuestionClick: (index: number) => void
 }
 
@@ -21,18 +20,13 @@ export default function QuestionMatrix({
   questions,
   currentQuestionIndex,
   answers,
-  markedForReview,
   onQuestionClick
 }: QuestionMatrixProps) {
   const getQuestionStatus = (question: Question, index: number) => {
-    const hasAnswer = answers[question.id] !== undefined && answers[question.id] !== null
-    const isMarked = markedForReview.has(question.id)
+    const hasAnswer = answers?.some((answer: any) => answer.question_id === question.id)
     const isCurrent = index === currentQuestionIndex
-
     if (isCurrent) {
       return 'current'
-    } else if (isMarked) {
-      return 'marked'
     } else if (hasAnswer) {
       return 'answered'
     } else {

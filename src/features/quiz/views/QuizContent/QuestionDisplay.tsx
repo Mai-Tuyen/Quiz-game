@@ -20,17 +20,9 @@ interface QuestionDisplayProps {
   question: Question
   answer: any
   onAnswerChange: (answer: any) => void
-  isMarkedForReview: boolean
-  onMarkForReview: () => void
 }
 
-export default function QuestionDisplay({
-  question,
-  answer,
-  onAnswerChange,
-  isMarkedForReview,
-  onMarkForReview
-}: QuestionDisplayProps) {
+export default function QuestionDisplay({ question, answer, onAnswerChange }: QuestionDisplayProps) {
   const renderAnswerComponent = () => {
     switch (question.question_type) {
       case 'single_choice':
