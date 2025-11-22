@@ -38,7 +38,7 @@ export async function getQuizWithQuestionsAPI(slug: string) {
       `
       *,
       category:categories(*),
-      questions(*)
+      questions: questions(id, quiz_id, question_text, question_type, question_order, question_data)
     `
     )
     .eq('slug', slug)

@@ -61,6 +61,9 @@ export const useUpsertUserAnswerMutation = () => {
     onMutate: async (variables) => {
       // Snapshot the previous value for rollback
       const previousAnswers = queryClient.getQueryData(['all-answer-of-quiz-attempt', variables.attemptId]) as any[]
+      if (!previousAnswers?.find((item: any) => item.question_id === variables.questionId)) {
+        return
+      }
       const newData = previousAnswers?.map((item: any) =>
         item.id === variables.id ? { ...item, selected_options: variables.selectedOptions } : item
       )
@@ -75,7 +78,12 @@ export const useUpsertUserAnswerMutation = () => {
     },
     onSuccess: (result, variables) => {
       // Update with the actual server response to ensure consistency
+      debugger
       const allAnswers = queryClient.getQueryData(['all-answer-of-quiz-attempt', variables.attemptId]) as any[]
+      if (!allAnswers?.find((item: any) => item.question_id === variables.questionId)) {
+        queryClient.invalidateQueries({ queryKey: ['all-answer-of-quiz-attempt'] })
+        return
+      }
       const newData = allAnswers?.map((item: any) => (item.id === variables.id ? result : item))
       queryClient.setQueryData(['all-answer-of-quiz-attempt', variables.attemptId], newData)
     }
