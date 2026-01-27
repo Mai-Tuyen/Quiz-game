@@ -4,6 +4,7 @@ import {
   useGetAllAnswerOfQuizAttemptQuery,
   useGetCurrentQuizAttemptQuery,
   useGetQuizWithQuestionsQuery,
+  useSubmitQuizAttemptMutation,
   useUpsertUserAnswerMutation
 } from '@/features/quiz/hooks/query'
 import NavigationControls from '@/features/quiz/views/QuizContent/NavigationControls'
@@ -11,9 +12,7 @@ import QuestionDisplay from '@/features/quiz/views/QuizContent/QuestionDisplay'
 import QuestionMatrix from '@/features/quiz/views/QuizContent/QuestionMatrix'
 import TimerRight from '@/features/quiz/views/QuizContent/TimerRight'
 import QuizLoading from '@/features/quiz/views/QuizLoading'
-import { submitQuizAttempt } from '@/global/lib/database/attempts'
 import { storage } from '@/global/lib/storage'
-import { createClient } from '@/global/lib/supabase/client'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
@@ -25,13 +24,12 @@ export default function QuizDetailView() {
   const router = useRouter()
   const quizSlug = params.slug as string
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [quizStartTime, setQuizStartTime] = useState<Date | null>(null)
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const { data: quiz, isLoading: isQuizLoading, error: quizError } = useGetQuizWithQuestionsQuery(quizSlug)
   const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz?.id, !!userId && !!quiz?.id)
   const { data: allAnswers } = useGetAllAnswerOfQuizAttemptQuery(currentAttempt?.id as string, !!currentAttempt?.id)
   const { mutate: upsertUserAnswer } = useUpsertUserAnswerMutation()
+  const { mutate: submitQuizAttempt, isPending: isSubmitting } = useSubmitQuizAttemptMutation()
   const timeStart = dayjs(currentAttempt?.start_time)
   const timeEnd = timeStart.add(quiz?.time_limit, 'minutes')
   const timeRemaining = timeEnd.diff(dayjs(), 'second')
@@ -62,23 +60,15 @@ export default function QuizDetailView() {
   }
 
   const handleSubmitQuiz = async () => {
-    if (!currentAttempt?.id || !quizStartTime || isSubmitting) return
+    if (!currentAttempt?.id || isSubmitting) return
 
-    // Show confirmation dialog
-    const confirmed = window.confirm(
-      "Are you sure you want to submit your quiz? You won't be able to change your answers after submission."
-    )
-
-    if (!confirmed) return
-
-    try {
-      const results = await submitQuizAttempt(currentAttempt.id, allAnswers as Record<string, any>, quizStartTime)
-
-      // Redirect to results page
-      router.push(`/result/${currentAttempt.id}`)
-    } catch (error) {
-      console.error('Error submitting quiz:', error)
-    }
+    submitQuizAttempt(currentAttempt.id, {
+      onSuccess: (data) => {
+        // Redirect to results page
+        // router.push(`/result/${currentAttempt.id}`)
+      },
+      onError: (error) => {}
+    })
   }
 
   if (isQuizLoading) {
@@ -165,7 +155,7 @@ export default function QuizDetailView() {
               <QuestionMatrix
                 questions={quiz.questions}
                 currentQuestionIndex={currentQuestionIndex}
-                answers={allAnswers as Record<string, any>}
+                answers={allAnswers || []}
                 onQuestionClick={handleQuestionNavigation}
               />
             </div>

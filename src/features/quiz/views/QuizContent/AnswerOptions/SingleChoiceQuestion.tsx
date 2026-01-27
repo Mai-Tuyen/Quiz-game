@@ -70,24 +70,6 @@ export default function SingleChoiceQuestion({ questionData, answer, onAnswerCha
             >
               {option.text}
             </div>
-
-            {/* Selection Indicator */}
-            {answer === option.id && (
-              <motion.div
-                initial={{ scale: 0, rotate: -90 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                className='text-blue-500'
-              >
-                <svg className='h-5 w-5' fill='currentColor' viewBox='0 0 20 20'>
-                  <path
-                    fillRule='evenodd'
-                    d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-              </motion.div>
-            )}
           </div>
         </motion.div>
       ))}

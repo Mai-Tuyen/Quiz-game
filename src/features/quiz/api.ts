@@ -155,3 +155,25 @@ export async function upsertUserAnswerAPI(id: string, attemptId: string, questio
   }
   return data
 }
+
+export async function submitQuizAttemptAPI(attemptId: string) {
+  const supabase = createClient()
+
+  const { data, error } = await supabase.rpc('submit_quiz_attempt_transaction', {
+    p_attempt_id: attemptId
+  })
+
+  if (error) {
+    throw error
+  }
+
+  if (!data?.success) {
+    throw new Error('Failed to submit quiz attempt')
+  }
+
+  return {
+    attempt: data.attempt,
+    results: data.results,
+    deletedAnswersCount: data.deleted_answers_count
+  }
+}

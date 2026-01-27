@@ -4,6 +4,7 @@ import {
   getCurrentQuizAttemptAPI,
   getQuizStartInfoAPI,
   getQuizWithQuestionsAPI,
+  submitQuizAttemptAPI,
   upsertUserAnswerAPI
 } from '@/features/quiz/api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -78,7 +79,6 @@ export const useUpsertUserAnswerMutation = () => {
     },
     onSuccess: (result, variables) => {
       // Update with the actual server response to ensure consistency
-      debugger
       const allAnswers = queryClient.getQueryData(['all-answer-of-quiz-attempt', variables.attemptId]) as any[]
       if (!allAnswers?.find((item: any) => item.question_id === variables.questionId)) {
         queryClient.invalidateQueries({ queryKey: ['all-answer-of-quiz-attempt'] })
@@ -86,6 +86,18 @@ export const useUpsertUserAnswerMutation = () => {
       }
       const newData = allAnswers?.map((item: any) => (item.id === variables.id ? result : item))
       queryClient.setQueryData(['all-answer-of-quiz-attempt', variables.attemptId], newData)
+    }
+  })
+}
+
+export const useSubmitQuizAttemptMutation = () => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (attemptId: string) => submitQuizAttemptAPI(attemptId),
+    onSuccess: () => {
+      // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ['current-quiz-attempt'] })
+      queryClient.invalidateQueries({ queryKey: ['all-answer-of-quiz-attempt'] })
     }
   })
 }
