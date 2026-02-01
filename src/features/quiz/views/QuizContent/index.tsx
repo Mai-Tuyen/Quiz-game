@@ -16,7 +16,7 @@ import { storage } from '@/global/lib/storage'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function QuizDetailView() {
   const userId = typeof window === 'undefined' ? null : storage.get('user')?.id
@@ -26,7 +26,25 @@ export default function QuizDetailView() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
   const { data: quiz, isLoading: isQuizLoading, error: quizError } = useGetQuizWithQuestionsQuery(quizSlug)
-  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz?.id, !!userId && !!quiz?.id)
+  const {
+    data: currentAttempt,
+    isFetched: isCurrentAttemptFetched,
+    isFetching: isCurrentAttemptFetching,
+    isError: isCurrentAttemptError,
+    error: currentAttemptError
+  } = useGetCurrentQuizAttemptQuery(quiz?.id, !!userId && !!quiz?.id)
+
+  // Redirect to quiz info when no incomplete quiz attempt is found (only after fetch completes, to avoid redirecting on stale cache after creating attempt)
+  useEffect(() => {
+    if (!quiz?.id || isQuizLoading) return
+    if (!userId) {
+      router.replace(`/quizzes/${quizSlug}/info`)
+      return
+    }
+    if (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt) {
+      router.replace(`/quizzes/${quizSlug}/info`)
+    }
+  }, [quiz?.id, quizSlug, isQuizLoading, userId, isCurrentAttemptFetched, isCurrentAttemptFetching, currentAttempt, router])
   const { data: allAnswers } = useGetAllAnswerOfQuizAttemptQuery(currentAttempt?.id as string, !!currentAttempt?.id)
   const { mutate: upsertUserAnswer } = useUpsertUserAnswerMutation()
   const { mutate: submitQuizAttempt, isPending: isSubmitting } = useSubmitQuizAttemptMutation()
@@ -64,14 +82,23 @@ export default function QuizDetailView() {
 
     submitQuizAttempt(currentAttempt.id, {
       onSuccess: (data) => {
-        // Redirect to results page
-        // router.push(`/result/${currentAttempt.id}`)
+        // navigate to results page
+        router.push(`/result/${currentAttempt.id}`)
       },
       onError: (error) => {}
     })
   }
 
+  const shouldRedirectToInfo =
+    quiz?.id &&
+    !isQuizLoading &&
+    (!userId || (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt))
+
   if (isQuizLoading) {
+    return <QuizLoading />
+  }
+
+  if (shouldRedirectToInfo) {
     return <QuizLoading />
   }
 

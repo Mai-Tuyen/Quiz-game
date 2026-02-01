@@ -23,11 +23,6 @@ DECLARE
   v_result_item JSONB;
   v_correct_options JSONB;
   v_user_selections JSONB;
-  v_correct_sequence JSONB;
-  v_user_sequence JSONB;
-  v_deleted_count INTEGER;
-  v_blank JSONB;
-  v_zone JSONB;
 BEGIN
   -- Get the attempt
   SELECT * INTO v_attempt
@@ -90,153 +85,32 @@ BEGIN
     v_is_correct := false;
     v_user_answer_data := COALESCE(v_user_answer.selected_options, 'null'::JSONB);
     
+    -- Use correct_answer column from questions table
+    v_correct_answer := v_question.correct_answer;
+
     CASE v_question.question_type
       WHEN 'single_choice' THEN
-        -- Find correct option
-        SELECT jsonb_agg(opt->>'id') INTO v_correct_answer
-        FROM jsonb_array_elements(v_question.question_data->'options') AS opt
-        WHERE (opt->>'is_correct')::BOOLEAN = true
-        LIMIT 1;
-        
-        -- Check if user answer matches
-        IF v_correct_answer IS NOT NULL AND jsonb_array_length(v_correct_answer) = 1 THEN
-          v_is_correct := (v_user_answer_data::TEXT = v_correct_answer->>0);
+        -- correct_answer format: {"id": "opt1"}, user selected_options: "opt1" (string)
+        IF v_correct_answer IS NOT NULL AND v_user_answer_data IS NOT NULL THEN
+          v_is_correct := (v_user_answer_data #>> '{}') = (v_correct_answer->>'id');
         END IF;
-        
-        v_result_item := v_result_item || jsonb_build_object('correctAnswer', v_correct_answer->0);
-        
+        v_result_item := v_result_item || jsonb_build_object('correctAnswer', v_correct_answer);
+
       WHEN 'multiple_choice' THEN
-        -- Get all correct option IDs
-        SELECT jsonb_agg(opt->>'id' ORDER BY opt->>'id') INTO v_correct_answer
-        FROM jsonb_array_elements(v_question.question_data->'options') AS opt
-        WHERE (opt->>'is_correct')::BOOLEAN = true;
-        
-        -- Get user selections (sorted)
-        IF jsonb_typeof(v_user_answer_data) = 'array' THEN
-          SELECT jsonb_agg(value ORDER BY value) INTO v_user_selections
-          FROM jsonb_array_elements(v_user_answer_data);
-          
-          -- Check if arrays match
-          IF v_correct_answer IS NOT NULL AND v_user_selections IS NOT NULL THEN
-            v_is_correct := (v_correct_answer = v_user_selections);
-          END IF;
+        -- correct_answer format: [{"id": "opt1"}, {"id": "opt2"}, ...], user: ["opt1", "opt2"] (array of strings)
+        IF v_correct_answer IS NOT NULL AND jsonb_typeof(v_correct_answer) = 'array'
+           AND jsonb_typeof(v_user_answer_data) = 'array' THEN
+          SELECT jsonb_agg(to_jsonb(x->>'id') ORDER BY x->>'id') INTO v_correct_options
+          FROM jsonb_array_elements(v_correct_answer) AS x;
+          SELECT jsonb_agg(to_jsonb(x #>> '{}') ORDER BY x #>> '{}') INTO v_user_selections
+          FROM jsonb_array_elements(v_user_answer_data) AS x;
+          v_is_correct := (v_correct_options = v_user_selections);
         END IF;
-        
         v_result_item := v_result_item || jsonb_build_object('correctAnswer', v_correct_answer);
-        
-      WHEN 'sequence' THEN
-        -- Get correct sequence (sorted by correct_order)
-        SELECT jsonb_agg(
-          jsonb_build_object('id', item->>'id', 'position', (item->>'correct_order')::INTEGER)
-          ORDER BY (item->>'correct_order')::INTEGER
-        ) INTO v_correct_sequence
-        FROM jsonb_array_elements(v_question.question_data->'items') AS item;
-        
-        -- Extract IDs in order
-        SELECT jsonb_agg(value->>'id' ORDER BY (value->>'position')::INTEGER) INTO v_correct_answer
-        FROM jsonb_array_elements(v_correct_sequence) AS value;
-        
-        -- Get user sequence
-        IF jsonb_typeof(v_user_answer_data) = 'array' THEN
-          SELECT jsonb_agg(value->>'id' ORDER BY (value->>'position')::INTEGER) INTO v_user_sequence
-          FROM jsonb_array_elements(v_user_answer_data) AS value;
-          
-          -- Check if sequences match
-          IF v_correct_answer IS NOT NULL AND v_user_sequence IS NOT NULL THEN
-            v_is_correct := (v_correct_answer = v_user_sequence);
-          END IF;
-        END IF;
-        
-        v_result_item := v_result_item || jsonb_build_object('correctAnswer', v_correct_answer);
-        
-      WHEN 'drag_word' THEN
-        -- Check if it's fill-in-the-blank type
-        IF v_question.question_data ? 'blanks' THEN
-          -- Get correct answers for blanks
-          SELECT jsonb_agg(
-            jsonb_build_object(
-              'blank_id', blank->>'id',
-              'correct_answers', blank->'correct_answers'
-            )
-          ) INTO v_correct_answer
-          FROM jsonb_array_elements(v_question.question_data->'blanks') AS blank;
-          
-          -- Check user answers
-          IF v_user_answer_data ? 'answers' THEN
-            v_is_correct := true;
-            FOR v_blank IN 
-              SELECT * FROM jsonb_array_elements(v_question.question_data->'blanks') AS blank
-            LOOP
-              DECLARE
-                v_blank_id TEXT := v_blank->>'id';
-                v_user_blank_answer JSONB;
-                v_correct_answers JSONB := v_blank->'correct_answers';
-              BEGIN
-                SELECT value INTO v_user_blank_answer
-                FROM jsonb_array_elements(v_user_answer_data->'answers') AS answer
-                WHERE (answer->>'blank_id') = v_blank_id
-                LIMIT 1;
-                
-                IF v_user_blank_answer IS NULL THEN
-                  v_is_correct := false;
-                  EXIT;
-                END IF;
-                
-                IF NOT (v_correct_answers @> jsonb_build_array(v_user_blank_answer->>'word_text')) THEN
-                  v_is_correct := false;
-                  EXIT;
-                END IF;
-              END;
-            END LOOP;
-          END IF;
-          
-          v_result_item := v_result_item || jsonb_build_object('correctAnswer', jsonb_build_object('blanks', v_correct_answer));
-          
-        -- Check if it's categorization type (drag_zones)
-        ELSIF v_question.question_data ? 'drag_zones' THEN
-          -- Get correct zone assignments
-          SELECT jsonb_agg(
-            jsonb_build_object(
-              'zone_id', zone->>'id',
-              'correct_items', zone->'correct_items'
-            )
-          ) INTO v_correct_answer
-          FROM jsonb_array_elements(v_question.question_data->'drag_zones') AS zone;
-          
-          -- Check user assignments
-          IF v_user_answer_data ? 'zone_assignments' THEN
-            v_is_correct := true;
-            FOR v_zone IN 
-              SELECT * FROM jsonb_array_elements(v_question.question_data->'drag_zones') AS zone
-            LOOP
-              DECLARE
-                v_zone_id TEXT := v_zone->>'id';
-                v_zone_items JSONB;
-                v_correct_items JSONB := v_zone->'correct_items';
-              BEGIN
-                SELECT jsonb_agg(value->>'item_id') INTO v_zone_items
-                FROM jsonb_array_elements(v_user_answer_data->'zone_assignments') AS assignment
-                WHERE (assignment->>'zone_id') = v_zone_id;
-                
-                IF v_zone_items IS NULL OR jsonb_array_length(v_zone_items) != jsonb_array_length(v_correct_items) THEN
-                  v_is_correct := false;
-                  EXIT;
-                END IF;
-                
-                IF NOT (v_correct_items <@ v_zone_items AND v_zone_items <@ v_correct_items) THEN
-                  v_is_correct := false;
-                  EXIT;
-                END IF;
-              END;
-            END LOOP;
-          END IF;
-          
-          v_result_item := v_result_item || jsonb_build_object('correctAnswer', jsonb_build_object('zones', v_correct_answer));
-        END IF;
-        
+
       ELSE
-        -- Unknown question type
-        v_result_item := v_result_item || jsonb_build_object('correctAnswer', NULL);
+        -- Other question types: no grading, just expose correct_answer if present
+        v_result_item := v_result_item || jsonb_build_object('correctAnswer', v_correct_answer);
     END CASE;
     
     -- Update result item with correctness
@@ -261,19 +135,12 @@ BEGIN
     time_taken = v_time_taken
   WHERE id = p_attempt_id
   RETURNING * INTO v_attempt;
-  
-  -- Delete all user_answers
-  DELETE FROM user_answers
-  WHERE attempt_id = p_attempt_id;
-  
-  GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
-  
-  -- Return comprehensive result
+
+  -- Return comprehensive result (user_answers are kept for review)
   RETURN jsonb_build_object(
     'success', true,
     'attempt', row_to_json(v_attempt),
-    'results', v_results,
-    'deleted_answers_count', v_deleted_count
+    'results', v_results
   );
   
 EXCEPTION

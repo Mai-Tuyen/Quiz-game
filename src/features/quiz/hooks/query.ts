@@ -9,10 +9,11 @@ import {
 } from '@/features/quiz/api'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-export const useGetQuizWithQuestionsQuery = (slug: string) => {
+export const useGetQuizWithQuestionsQuery = (slug: string, enabled: boolean = true) => {
   return useQuery({
     queryKey: ['quiz-questions', slug],
-    queryFn: () => getQuizWithQuestionsAPI(slug)
+    queryFn: () => getQuizWithQuestionsAPI(slug),
+    enabled: enabled
   })
 }
 

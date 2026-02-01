@@ -106,7 +106,11 @@ export async function getCurrentQuizAttemptAPI(quizId: string): Promise<Partial<
     throw error
   }
 
-  return data?.[0] || null
+  // if (data?.length === 0) {
+  //   throw new Error('Quiz attempt not found')
+  // }
+
+  return data?.[0] ?? null
 }
 
 export async function createQuizAttemptAPI(quizId: string, userId: string): Promise<string> {

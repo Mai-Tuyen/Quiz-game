@@ -1,23 +1,32 @@
 'use client'
 import { useCreateQuizAttemptMutation, useGetQuizStartInfoQuery } from '@/features/quiz/hooks/query'
 import { storage } from '@/global/lib/storage'
-import { createClient } from '@/global/lib/supabase/client'
+import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { useRef } from 'react'
 type IProps = {
   slug: string
 }
 export default function QuizStartInfo({ slug }: IProps) {
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const createStartedRef = useRef(false)
   const { data: quizStartInfo } = useGetQuizStartInfoQuery(slug)
-  const { mutate: createQuizAttempt } = useCreateQuizAttemptMutation()
+  const { mutate: createQuizAttempt, isPending: isCreatingAttempt } = useCreateQuizAttemptMutation()
   const userId = storage.get('user')?.id
   const handleStartQuiz = () => {
+    if (createStartedRef.current || isCreatingAttempt || !quizStartInfo?.id || !userId) return
+    createStartedRef.current = true
     createQuizAttempt(
-      { quizId: quizStartInfo?.id ?? '', userId: userId ?? '' },
+      { quizId: quizStartInfo.id, userId },
       {
         onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['current-quiz-attempt', quizStartInfo.id] })
           router.push(`/quizzes/${slug}`)
+        },
+        onSettled: () => {
+          createStartedRef.current = false
         }
       }
     )
@@ -58,11 +67,19 @@ export default function QuizStartInfo({ slug }: IProps) {
 
         <motion.button
           onClick={handleStartQuiz}
-          className='bg-primary cursor-pointer rounded-xl px-8 py-3 text-lg font-semibold text-white transition-colors duration-200'
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+          disabled={isCreatingAttempt}
+          className='bg-primary cursor-pointer rounded-xl px-8 py-3 text-lg font-semibold text-white transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-70'
+          whileHover={isCreatingAttempt ? undefined : { scale: 1.05 }}
+          whileTap={isCreatingAttempt ? undefined : { scale: 0.95 }}
         >
-          Start Quiz
+          {isCreatingAttempt ? (
+            <span className='flex items-center justify-center gap-2'>
+              <span className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
+              Starting...
+            </span>
+          ) : (
+            'Start Quiz'
+          )}
         </motion.button>
       </motion.div>
     </div>
