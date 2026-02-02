@@ -58,3 +58,14 @@ export interface QuizAttempt {
   is_completed: boolean
   time_taken: number // in seconds
 }
+
+/** Attempt with embedded quiz (from getAllQuizAttemptsAPI) */
+export interface QuizAttemptWithQuiz extends QuizAttempt {
+  quiz: {
+    id: string
+    title: string
+    slug: string
+    image_url?: string | null
+    time_limit: number
+  }
+}

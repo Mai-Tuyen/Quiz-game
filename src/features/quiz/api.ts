@@ -1,5 +1,4 @@
-import { Quiz, QuizStartInfo } from '@/features/quiz/type'
-import { QuizAttempt } from '@/global/lib/database/attempts'
+import { Quiz, QuizAttempt, QuizAttemptWithQuiz, QuizStartInfo } from '@/features/quiz/type'
 import { createClient } from '@/global/lib/supabase/client'
 import dayjs from 'dayjs'
 
@@ -105,12 +104,23 @@ export async function getCurrentQuizAttemptAPI(quizId: string): Promise<Partial<
   if (error) {
     throw error
   }
-
-  // if (data?.length === 0) {
-  //   throw new Error('Quiz attempt not found')
-  // }
-
   return data?.[0] ?? null
+}
+
+export async function getAllQuizAttemptsAPI(): Promise<QuizAttemptWithQuiz[]> {
+  const supabase = createClient()
+  const {
+    data: { session }
+  } = await supabase.auth.getSession()
+  const { data, error } = await supabase
+    .from('quiz_attempts')
+    .select(`*, quiz:quizzes(*)`)
+    .eq('user_id', session?.user?.id)
+    .order('start_time', { ascending: false })
+  if (error) {
+    throw error
+  }
+  return data ?? []
 }
 
 export async function createQuizAttemptAPI(quizId: string, userId: string): Promise<string> {

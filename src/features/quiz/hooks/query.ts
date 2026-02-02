@@ -1,6 +1,7 @@
 import {
   createQuizAttemptAPI,
   getAllAnswerOfQuizAttemptAPI,
+  getAllQuizAttemptsAPI,
   getCurrentQuizAttemptAPI,
   getQuizStartInfoAPI,
   getQuizWithQuestionsAPI,
@@ -100,5 +101,12 @@ export const useSubmitQuizAttemptMutation = () => {
       queryClient.invalidateQueries({ queryKey: ['current-quiz-attempt'] })
       queryClient.invalidateQueries({ queryKey: ['all-answer-of-quiz-attempt'] })
     }
+  })
+}
+
+export const useGetAllQuizAttemptsQuery = () => {
+  return useQuery({
+    queryKey: ['all-quiz-attempts'],
+    queryFn: () => getAllQuizAttemptsAPI()
   })
 }

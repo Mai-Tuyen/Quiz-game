@@ -1,20 +1,19 @@
 'use client'
 
-import React, { useEffect, useLayoutEffect, useState } from 'react'
-import { createClient } from '../../lib/supabase/client'
-import { User } from '@supabase/supabase-js'
-import Image from 'next/image'
-import { storage } from '@/global/lib/storage'
-import { LoginModal } from '@/features/auth/views/login/ModalLogin'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/global/components/ui/dropdown-menu'
+import { storage } from '@/global/lib/storage'
 import { cn } from '@/global/lib/utils'
-import { useSearchParams, usePathname, useRouter } from 'next/navigation'
+import { User } from '@supabase/supabase-js'
+import Image from 'next/image'
 import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { useEffect, useLayoutEffect, useState } from 'react'
+import { createClient } from '../../lib/supabase/client'
 export default function Header() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
@@ -104,8 +103,13 @@ export default function Header() {
                   </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+                  <DropdownMenuItem onClick={() => router.push('/my-quizzes')} className='cursor-pointer'>
+                    <span className='hover:text-primary text-sm font-medium text-gray-600 transition-colors'>
+                      My quizzes
+                    </span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleSignOut} className='cursor-pointer'>
-                    <span className='text-sm font-medium text-gray-600 transition-colors hover:text-red-600'>
+                    <span className='text-sm font-medium text-gray-600 text-red-600 transition-colors hover:text-red-600'>
                       Sign Out
                     </span>
                   </DropdownMenuItem>
