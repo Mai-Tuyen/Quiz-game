@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/global/lib/utils'
 
@@ -12,29 +12,30 @@ interface TimerProps {
 
 export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps) {
   const [currentTime, setCurrentTime] = useState(timeRemaining)
+  const hasFiredTimeUp = useRef(false)
+  const onTimeUpRef = useRef(onTimeUp)
+  onTimeUpRef.current = onTimeUp
 
   useEffect(() => {
     setCurrentTime(timeRemaining)
+    hasFiredTimeUp.current = false
   }, [timeRemaining])
 
   useEffect(() => {
     if (currentTime <= 0) {
-      onTimeUp()
+      if (!hasFiredTimeUp.current) {
+        hasFiredTimeUp.current = true
+        onTimeUpRef.current()
+      }
       return
     }
 
     const timer = setInterval(() => {
-      setCurrentTime((prev) => {
-        if (prev <= 1) {
-          onTimeUp()
-          return 0
-        }
-        return prev - 1
-      })
+      setCurrentTime((prev) => (prev <= 1 ? 0 : prev - 1))
     }, 1000)
 
     return () => clearInterval(timer)
-  }, [currentTime, onTimeUp])
+  }, [currentTime])
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
@@ -63,7 +64,7 @@ export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps
   }
 
   return (
-    <span className={cn('flex items-center gap-2 rounded-md px-2 py-1 text-sm', getBackgroundColor(), getTimerColor())}>
+    <span className={cn('flex items-center gap-2 rounded-md px-1 text-sm', getBackgroundColor(), getTimerColor())}>
       <div className={cn('rounded-lg p-2', getBackgroundColor(), getTimerColor())}>
         <svg className='size-4 text-gray-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path

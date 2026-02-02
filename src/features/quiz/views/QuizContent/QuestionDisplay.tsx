@@ -24,31 +24,35 @@ interface QuestionDisplayProps {
 
 export default function QuestionDisplay({ question, answer, onAnswerChange }: QuestionDisplayProps) {
   const renderAnswerComponent = () => {
-    switch (question.question_type) {
+    switch (question?.question_type) {
       case 'single_choice':
         return (
-          <SingleChoiceQuestion questionData={question.question_data} answer={answer} onAnswerChange={onAnswerChange} />
+          <SingleChoiceQuestion
+            questionData={question?.question_data}
+            answer={answer}
+            onAnswerChange={onAnswerChange}
+          />
         )
       case 'multiple_choice':
         return (
           <MultipleChoiceQuestion
-            questionData={question.question_data}
+            questionData={question?.question_data}
             answer={answer}
             onAnswerChange={onAnswerChange}
           />
         )
       case 'sequence':
         return (
-          <SequenceQuestion questionData={question.question_data} answer={answer} onAnswerChange={onAnswerChange} />
+          <SequenceQuestion questionData={question?.question_data} answer={answer} onAnswerChange={onAnswerChange} />
         )
       case 'drag_word':
         return (
-          <DragWordQuestion questionData={question.question_data} answer={answer} onAnswerChange={onAnswerChange} />
+          <DragWordQuestion questionData={question?.question_data} answer={answer} onAnswerChange={onAnswerChange} />
         )
       default:
         return (
           <div className='rounded-lg bg-red-50 p-4 text-red-500'>
-            Unsupported question type: {question.question_type}
+            Unsupported question type: {question?.question_type}
           </div>
         )
     }
@@ -64,7 +68,7 @@ export default function QuestionDisplay({ question, answer, onAnswerChange }: Qu
     >
       {/* Question Header */}
       <div className='mb-8'>
-        <h2 className='text-xl leading-relaxed font-semibold text-gray-900'>{question.question_text}</h2>
+        <h2 className='text-xl leading-relaxed font-semibold text-gray-900'>{question?.question_text}</h2>
       </div>
 
       {/* Answer Component */}

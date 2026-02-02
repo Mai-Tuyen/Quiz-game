@@ -1,6 +1,7 @@
 'use client'
 
-import { useGetCurrentQuizAttemptQuery } from '@/features/quiz/hooks/query'
+import { useCallback } from 'react'
+import { useGetCurrentQuizAttemptQuery, useSubmitQuizAttemptMutation } from '@/features/quiz/hooks/query'
 import Timer from '@/features/quiz/views/components/Timer'
 import { Quiz } from '@/global/lib/database/quizzes'
 import { storage } from '@/global/lib/storage'
@@ -8,6 +9,7 @@ import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { toast } from 'react-toastify'
 interface QuizCardProps {
   quiz: Quiz
   index: number
@@ -32,7 +34,8 @@ const difficultyLabels = {
 export default function QuizCard({ quiz, index }: QuizCardProps) {
   const router = useRouter()
   const userId = storage.get('user')?.id
-  const { data: currentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id, !!userId)
+  const { data: currentAttempt, refetch: refetchCurrentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id, !!userId)
+  const { mutate: submitQuizAttempt, isPending: isSubmitting } = useSubmitQuizAttemptMutation()
   const endTime = currentAttempt?.start_time
     ? dayjs(currentAttempt.start_time).add(quiz.time_limit, 'minutes').toISOString()
     : null
@@ -50,6 +53,19 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
     e.preventDefault()
     router.push(`/quizzes/${quiz.slug}`)
   }
+
+  const handleTimeUp = useCallback(() => {
+    const attemptId = currentAttempt?.id
+    if (!attemptId || isSubmitting) return
+    submitQuizAttempt(attemptId, {
+      onSuccess: () => {
+        toast.success('Quiz submitted successfully')
+      },
+      onError: (error) => {
+        toast.error(error.message)
+      }
+    })
+  }, [currentAttempt?.id, isSubmitting, submitQuizAttempt, refetchCurrentAttempt])
 
   return (
     <motion.div
@@ -152,7 +168,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
               </div>
               <div className='flex items-center gap-2'>
                 {currentAttempt?.id ? (
-                  <Timer timeRemaining={remainingTime || 0} totalTime={quiz.time_limit * 60} onTimeUp={() => {}} />
+                  <Timer timeRemaining={remainingTime || 0} totalTime={quiz.time_limit * 60} onTimeUp={handleTimeUp} />
                 ) : null}
                 <motion.div
                   className='text-primary flex items-center text-sm font-medium'

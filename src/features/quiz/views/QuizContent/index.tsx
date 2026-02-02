@@ -44,7 +44,16 @@ export default function QuizDetailView() {
     if (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt) {
       router.replace(`/quizzes/${quizSlug}/info`)
     }
-  }, [quiz?.id, quizSlug, isQuizLoading, userId, isCurrentAttemptFetched, isCurrentAttemptFetching, currentAttempt, router])
+  }, [
+    quiz?.id,
+    quizSlug,
+    isQuizLoading,
+    userId,
+    isCurrentAttemptFetched,
+    isCurrentAttemptFetching,
+    currentAttempt,
+    router
+  ])
   const { data: allAnswers } = useGetAllAnswerOfQuizAttemptQuery(currentAttempt?.id as string, !!currentAttempt?.id)
   const { mutate: upsertUserAnswer } = useUpsertUserAnswerMutation()
   const { mutate: submitQuizAttempt, isPending: isSubmitting } = useSubmitQuizAttemptMutation()
@@ -90,9 +99,7 @@ export default function QuizDetailView() {
   }
 
   const shouldRedirectToInfo =
-    quiz?.id &&
-    !isQuizLoading &&
-    (!userId || (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt))
+    quiz?.id && !isQuizLoading && (!userId || (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt))
 
   if (isQuizLoading) {
     return <QuizLoading />
