@@ -82,16 +82,17 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
         transition: { duration: 0.2, ease: 'easeOut' }
       }}
       whileTap={{ scale: 0.98 }}
-      className='group'
+      className='group h-full'
     >
-      <div onClick={currentAttempt?.id ? handleContinueQuiz : handleStartQuiz} className='block cursor-pointer'>
+      <div onClick={currentAttempt?.id ? handleContinueQuiz : handleStartQuiz} className='block h-full cursor-pointer'>
         <motion.div
-          className='h-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl'
+          className='flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl'
           whileHover={{
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
           }}
         >
-          <motion.div className='relative h-32 overflow-hidden' transition={{ duration: 0.3 }}>
+          {/* Image: fixed height */}
+          <motion.div className='relative h-32 shrink-0 overflow-hidden' transition={{ duration: 0.3 }}>
             <motion.div
               className='absolute inset-0 bg-white/20'
               initial={{ x: '-100%' }}
@@ -103,23 +104,28 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
             )}
           </motion.div>
 
-          {/* Content */}
-          <div className='p-6'>
-            {/* Title */}
-            <motion.h3
-              className='group-hover:text-primary mb-2 line-clamp-2 text-lg font-semibold text-gray-900 transition-colors duration-200'
-              whileHover={{ x: 2 }}
-              transition={{ duration: 0.2 }}
-            >
-              {quiz.title}
-            </motion.h3>
+          {/* Content: flex-1 so all cards same total height */}
+          <div className='flex min-h-0 flex-1 flex-col p-6'>
+            {/* Title: fixed height for 2 lines so 1-line and 2-line titles take same space */}
+            <div className='mb-2 min-h-14 shrink-0'>
+              <motion.h3
+                className='group-hover:text-primary line-clamp-2 text-lg font-semibold text-gray-900 transition-colors duration-200'
+                whileHover={{ x: 2 }}
+                transition={{ duration: 0.2 }}
+              >
+                {quiz.title}
+              </motion.h3>
+            </div>
 
             {/* Description */}
-            <p title={quiz.description} className='mb-4 truncate text-sm leading-relaxed text-gray-600'>
+            <p title={quiz.description} className='mb-4 shrink-0 truncate text-sm leading-relaxed text-gray-600'>
               {quiz.description}
             </p>
+            {/* Spacer: pushes stats + CTA to bottom so all cards align */}
+            <div className='min-h-0 flex-1' aria-hidden />
+
             {/* Question Count and Time Limit */}
-            <div className='mb-4 flex items-center justify-between'>
+            <div className='mb-4 flex shrink-0 items-center justify-between'>
               <motion.div
                 className='flex items-center gap-2'
                 whileHover={{ scale: 1.05 }}
@@ -157,9 +163,9 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
               </motion.div>
             </div>
 
-            {/* Difficulty Badge */}
+            {/* Difficulty Badge + CTA */}
             <motion.div
-              className='flex items-center justify-between'
+              className='flex shrink-0 items-center justify-between'
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >

@@ -64,7 +64,7 @@ export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps
   }
 
   return (
-    <span className={cn('flex items-center gap-2 rounded-md px-1 text-sm', getBackgroundColor(), getTimerColor())}>
+    <span className={cn('flex items-center gap-2 rounded-md pr-2 text-sm', getBackgroundColor(), getTimerColor())}>
       <div className={cn('rounded-lg p-2', getBackgroundColor(), getTimerColor())}>
         <svg className='size-4 text-gray-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
           <path
