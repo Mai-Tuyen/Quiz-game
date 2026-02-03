@@ -16,7 +16,6 @@ export default function MyQuizzesView() {
       <div className='mx-auto max-w-3xl px-4 py-8'>
         <div className='mb-8'>
           <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
-          <p className='mt-1 text-gray-600'>Your attempts and progress</p>
         </div>
         <div className='space-y-3'>
           {[1, 2, 3].map((i) => (
@@ -43,7 +42,6 @@ export default function MyQuizzesView() {
       <div className='mx-auto max-w-3xl px-4 py-8'>
         <div className='mb-8'>
           <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
-          <p className='mt-1 text-gray-600'>Your attempts and progress</p>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -64,7 +62,6 @@ export default function MyQuizzesView() {
     <div className='mx-auto max-w-3xl px-4 py-8'>
       <div className='mb-8'>
         <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
-        <p className='mt-1 text-gray-600'>Your attempts and progress</p>
       </div>
       <ul className='space-y-3'>
         {quizAttempts.map((quizAttempt, index) => (

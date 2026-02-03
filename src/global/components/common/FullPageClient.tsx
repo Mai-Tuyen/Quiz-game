@@ -1,5 +1,13 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+
+type FullPageContextValue = { currentPage: number }
+const FullPageContext = createContext<FullPageContextValue | null>(null)
+
+export function useFullPage() {
+  const ctx = useContext(FullPageContext)
+  return ctx
+}
 
 export default function FullPageClient({ children }: { children: React.ReactNode }) {
   const [currentPage, setCurrentPage] = useState(0)
@@ -81,28 +89,30 @@ export default function FullPageClient({ children }: { children: React.ReactNode
   // Remove scroll event listener to prevent conflicts with smooth scrolling
 
   return (
-    <div className='relative'>
-      <div ref={containerRef}>
-        {React.Children.map(children, (child, index) => (
-          <div key={index} className='h-screen w-full last:h-[calc(100vh-200px)]'>
-            {child}
-          </div>
-        ))}
-      </div>
+    <FullPageContext.Provider value={{ currentPage }}>
+      <div className='relative'>
+        <div ref={containerRef}>
+          {React.Children.map(children, (child, index) => (
+            <div key={index} className='h-screen w-full last:h-[calc(100vh-200px)]'>
+              {child}
+            </div>
+          ))}
+        </div>
 
-      {/* Navigation dots */}
-      <div className='fixed top-1/2 right-6 z-50 flex -translate-y-1/2 flex-col gap-3'>
-        {React.Children.map(children, (_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentPage(index)}
-            className={`h-3 w-3 rounded-full transition-all duration-300 ${
-              index === currentPage ? 'scale-125 bg-white' : 'bg-gray-400 hover:bg-white/75'
-            }`}
-            aria-label={`Go to page ${index + 1}`}
-          />
-        ))}
+        {/* Navigation dots */}
+        <div className='fixed top-1/2 right-6 z-50 flex -translate-y-1/2 flex-col gap-3'>
+          {React.Children.map(children, (_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentPage(index)}
+              className={`h-3 w-3 rounded-full transition-all duration-300 ${
+                index === currentPage ? 'scale-125 bg-white' : 'bg-gray-400 hover:bg-white/75'
+              }`}
+              aria-label={`Go to page ${index + 1}`}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </FullPageContext.Provider>
   )
 }

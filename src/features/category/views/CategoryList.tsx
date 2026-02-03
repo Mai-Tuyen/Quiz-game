@@ -1,5 +1,5 @@
 import { getCategoriesAPI } from '@/features/category/api'
-import CategoryCard from '@/features/category/views/components/CategoryCard'
+import CategoriesGridAnimated from '@/features/category/views/components/CategoriesGridAnimated'
 import FullPageClient from '@/global/components/common/FullPageClient'
 import TypeQuote from '@/global/components/common/TypeQuote'
 export default async function CategoryList() {
@@ -41,14 +41,8 @@ export default async function CategoryList() {
         {/* Main Content */}
         <main id='content' className='flex h-screen w-full items-center justify-center px-4 sm:px-6 lg:px-8'>
           <div className='mx-auto max-w-7xl'>
-            {/* Categories Grid */}
-            {categories.length > 0 && (
-              <div className='grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-                {categories.map((category) => (
-                  <CategoryCard key={category.id} category={category} />
-                ))}
-              </div>
-            )}
+            {/* Categories Grid - animation starts when main content is in view */}
+            <CategoriesGridAnimated categories={categories} />
           </div>
         </main>
 
