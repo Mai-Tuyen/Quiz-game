@@ -145,7 +145,7 @@ export default function QuizDetailView() {
           </div>
 
           {/* Navigation Controls */}
-          <div className='border-t border-gray-200 bg-white p-4'>
+          <div className='sticky bottom-0 border-t border-gray-200 bg-white p-4'>
             <NavigationControls
               currentIndex={currentQuestionIndex}
               totalQuestions={quiz.questions.length}
