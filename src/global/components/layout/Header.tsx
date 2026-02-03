@@ -87,7 +87,7 @@ export default function Header() {
           </div>
           <nav className='hidden shrink-0 items-center space-x-6 md:flex'>
             {user ? (
-              <DropdownMenu>
+              <DropdownMenu modal={false}>
                 <DropdownMenuTrigger className='cursor-pointer'>
                   <div className='flex items-center space-x-2 rounded-full border border-gray-200 p-1 px-2'>
                     <Image
