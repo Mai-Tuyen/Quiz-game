@@ -13,6 +13,97 @@ export default function FullPageClient({ children }: { children: React.ReactNode
   const [currentPage, setCurrentPage] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
   const isScrolling = useRef(false)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+
+  // Sync currentPage with actual scroll position using Intersection Observer
+  useEffect(() => {
+    const pageElements = containerRef.current?.children
+    if (!pageElements || pageElements.length === 0) return
+
+    const observers: IntersectionObserver[] = []
+
+    // Create an Intersection Observer for each page
+    Array.from(pageElements).forEach((pageElement, index) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            // If this page is more than 50% visible, update currentPage
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+              // Only update if not programmatically scrolling
+              if (!isScrolling.current) {
+                setCurrentPage((prev) => {
+                  // Only update if different to avoid unnecessary re-renders
+                  return index !== prev ? index : prev
+                })
+              }
+            }
+          })
+        },
+        {
+          threshold: [0, 0.5, 1],
+          rootMargin: '-20% 0px -20% 0px' // Require at least 50% visibility
+        }
+      )
+
+      observer.observe(pageElement as Element)
+      observers.push(observer)
+    })
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect())
+    }
+  }, []) // Run once on mount
+
+  // Handle manual scrollbar dragging - backup method for rapid scrolling
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout | null = null
+    let ticking = false
+
+    const handleScroll = () => {
+      // Throttle scroll events
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Only handle if not programmatically scrolling
+          if (!isScrolling.current) {
+            const pageElements = containerRef.current?.children
+            if (!pageElements) return
+
+            const viewportHeight = window.innerHeight
+            const scrollPosition = window.scrollY
+            const newPage = Math.round(scrollPosition / viewportHeight)
+
+            // Clamp to valid page range
+            const totalPages = pageElements.length
+            const clampedPage = Math.max(0, Math.min(newPage, totalPages - 1))
+
+            setCurrentPage((prev) => {
+              // Only update if different
+              return clampedPage !== prev ? clampedPage : prev
+            })
+          }
+          ticking = false
+        })
+        ticking = true
+      }
+
+      // Reset isScrolling flag after scroll ends (for programmatic scrolls)
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
+      scrollTimeout = setTimeout(() => {
+        isScrolling.current = false
+      }, 200)
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout)
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
@@ -70,23 +161,38 @@ export default function FullPageClient({ children }: { children: React.ReactNode
   }, [currentPage])
 
   useEffect(() => {
-    // Smooth scroll to the current page
-    const scrollToPage = () => {
-      const scrollTop = currentPage * window.innerHeight
-      window.scrollTo({
-        top: scrollTop,
-        behavior: 'smooth'
-      })
-      // Reset isScrolling flag after smooth scroll completes
-      setTimeout(() => {
-        isScrolling.current = false
-      }, 300)
+    // Smooth scroll to the current page (only when programmatically changing)
+    if (isScrolling.current) {
+      const scrollToPage = () => {
+        const scrollTop = currentPage * window.innerHeight
+        window.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth'
+        })
+        // Reset isScrolling flag after smooth scroll completes
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current)
+        }
+        scrollTimeoutRef.current = setTimeout(() => {
+          isScrolling.current = false
+        }, 500) // Increased timeout to account for smooth scroll duration
+      }
+
+      scrollToPage()
     }
 
-    scrollToPage()
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
   }, [currentPage])
 
-  // Remove scroll event listener to prevent conflicts with smooth scrolling
+  const handleDotClick = (index: number) => {
+    if (isScrolling.current) return
+    isScrolling.current = true
+    setCurrentPage(index)
+  }
 
   return (
     <FullPageContext.Provider value={{ currentPage }}>
@@ -104,7 +210,7 @@ export default function FullPageClient({ children }: { children: React.ReactNode
           {React.Children.map(children, (_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentPage(index)}
+              onClick={() => handleDotClick(index)}
               className={`h-3 w-3 rounded-full transition-all duration-300 ${
                 index === currentPage ? 'scale-125 bg-white' : 'bg-gray-400 hover:bg-white/75'
               }`}
