@@ -187,11 +187,11 @@ export default function ScoreDisplay({
                 transition={{ delay: 1.2, duration: 0.5 }}
                 className='grid grid-cols-2 gap-4'
               >
-                <div className='w-[200px] rounded-lg bg-green-50 p-4 text-center'>
+                <div className='w-[100px] rounded-lg bg-green-50 p-4 text-center sm:w-[200px]'>
                   <div className='text-2xl font-bold text-green-600'>{score}</div>
                   <div className='text-sm text-green-700'>Correct</div>
                 </div>
-                <div className='w-[200px] rounded-lg bg-red-50 p-4 text-center'>
+                <div className='w-[100px] rounded-lg bg-red-50 p-4 text-center sm:w-[200px]'>
                   <div className='text-2xl font-bold text-red-600'>{maxScore - score}</div>
                   <div className='text-sm text-red-700'>Incorrect</div>
                 </div>

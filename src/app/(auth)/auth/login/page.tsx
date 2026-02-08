@@ -1,5 +1,10 @@
 import { LoginPage as LoginPageComponent } from '@/features/auth'
+import { Suspense } from 'react'
 
 export default function LoginPage() {
-  return <LoginPageComponent nextUrl='/' />
+  return (
+    <Suspense fallback={null}>
+      <LoginPageComponent />
+    </Suspense>
+  )
 }

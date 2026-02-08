@@ -205,14 +205,14 @@ export default function FullPageClient({ children }: { children: React.ReactNode
           ))}
         </div>
 
-        {/* Navigation dots */}
-        <div className='fixed top-1/2 right-6 z-50 flex -translate-y-1/2 flex-col gap-3'>
+        {/* Navigation dots - Mobile First Responsive */}
+        <div className='fixed top-1/2 right-3 z-50 flex -translate-y-1/2 flex-col gap-2 sm:right-6 sm:gap-3'>
           {React.Children.map(children, (_, index) => (
             <button
               key={index}
               onClick={() => handleDotClick(index)}
-              className={`h-3 w-3 rounded-full transition-all duration-300 ${
-                index === currentPage ? 'scale-125 bg-white' : 'bg-gray-400 hover:bg-white/75'
+              className={`h-2.5 w-2.5 rounded-full transition-all duration-300 sm:h-3 sm:w-3 ${
+                index === currentPage ? 'scale-125 bg-white shadow-lg' : 'bg-gray-400 hover:bg-white/75'
               }`}
               aria-label={`Go to page ${index + 1}`}
             />

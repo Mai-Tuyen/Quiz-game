@@ -3,7 +3,7 @@
 import { useCallback } from 'react'
 import { useGetCurrentQuizAttemptQuery, useSubmitQuizAttemptMutation } from '@/features/quiz/hooks/query'
 import Timer from '@/features/quiz/views/components/Timer'
-import { Quiz } from '@/global/lib/database/quizzes'
+import { Quiz } from '@/features/quiz/type'
 import { storage } from '@/global/lib/storage'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
@@ -86,13 +86,13 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
     >
       <div onClick={currentAttempt?.id ? handleContinueQuiz : handleStartQuiz} className='block h-full cursor-pointer'>
         <motion.div
-          className='flex h-full flex-col overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl'
+          className='flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-xl sm:rounded-xl'
           whileHover={{
             boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.15)'
           }}
         >
-          {/* Image: fixed height */}
-          <motion.div className='relative h-32 shrink-0 overflow-hidden' transition={{ duration: 0.3 }}>
+          {/* Image: fixed height - Mobile First Responsive */}
+          <motion.div className='relative h-28 shrink-0 overflow-hidden sm:h-32 md:h-36' transition={{ duration: 0.3 }}>
             <motion.div
               className='absolute inset-0 bg-white/20'
               initial={{ x: '-100%' }}
@@ -104,12 +104,12 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
             )}
           </motion.div>
 
-          {/* Content: flex-1 so all cards same total height */}
-          <div className='flex min-h-0 flex-1 flex-col p-6'>
-            {/* Title: fixed height for 2 lines so 1-line and 2-line titles take same space */}
-            <div className='mb-2 min-h-14 shrink-0'>
+          {/* Content: flex-1 so all cards same total height - Mobile First Responsive */}
+          <div className='flex min-h-0 flex-1 flex-col p-4 sm:p-5 md:p-6'>
+            {/* Title: fixed height for 2 lines so 1-line and 2-line titles take same space - Mobile First */}
+            <div className='mb-2 min-h-12 shrink-0 sm:min-h-14'>
               <motion.h3
-                className='group-hover:text-primary line-clamp-2 text-lg font-semibold text-gray-900 transition-colors duration-200'
+                className='group-hover:text-primary line-clamp-2 text-base font-semibold text-gray-900 transition-colors duration-200 sm:text-lg'
                 whileHover={{ x: 2 }}
                 transition={{ duration: 0.2 }}
               >
@@ -117,22 +117,30 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
               </motion.h3>
             </div>
 
-            {/* Description */}
-            <p title={quiz.description} className='mb-4 shrink-0 truncate text-sm leading-relaxed text-gray-600'>
+            {/* Description - Mobile First Responsive */}
+            <p
+              title={quiz.description}
+              className='mb-3 shrink-0 truncate text-xs leading-relaxed text-gray-600 sm:mb-4 sm:text-sm'
+            >
               {quiz.description}
             </p>
             {/* Spacer: pushes stats + CTA to bottom so all cards align */}
             <div className='min-h-0 flex-1' aria-hidden />
 
-            {/* Question Count and Time Limit */}
-            <div className='mb-4 flex shrink-0 items-center justify-between'>
+            {/* Question Count and Time Limit - Mobile First Responsive */}
+            <div className='mb-3 flex shrink-0 items-center justify-between sm:mb-4'>
               <motion.div
-                className='flex items-center gap-2'
+                className='flex items-center gap-1.5 sm:gap-2'
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className='rounded-lg bg-gray-100 p-2'>
-                  <svg className='h-4 w-4 text-gray-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <div className='rounded-lg bg-gray-100 p-1.5 sm:p-2'>
+                  <svg
+                    className='h-3.5 w-3.5 text-gray-600 sm:h-4 sm:w-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
                     <path
                       strokeLinecap='round'
                       strokeLinejoin='round'
@@ -141,16 +149,21 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                     />
                   </svg>
                 </div>
-                <span className='text-sm font-medium text-gray-600'>{quiz.question_count} Questions</span>
+                <span className='text-xs font-medium text-gray-600 sm:text-sm'>{quiz.question_count} Questions</span>
               </motion.div>
 
               <motion.div
-                className='flex items-center gap-2'
+                className='flex items-center gap-1.5 sm:gap-2'
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.2 }}
               >
-                <div className='rounded-lg bg-gray-100 p-2'>
-                  <svg className='h-4 w-4 text-gray-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                <div className='rounded-lg bg-gray-100 p-1.5 sm:p-2'>
+                  <svg
+                    className='h-3.5 w-3.5 text-gray-600 sm:h-4 sm:w-4'
+                    fill='none'
+                    stroke='currentColor'
+                    viewBox='0 0 24 24'
+                  >
                     <path
                       strokeLinecap='round'
                       strokeLinejoin='round'
@@ -159,17 +172,17 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                     />
                   </svg>
                 </div>
-                <span className='text-sm font-medium text-gray-600'>{quiz.time_limit} min</span>
+                <span className='text-xs font-medium text-gray-600 sm:text-sm'>{quiz.time_limit} min</span>
               </motion.div>
             </div>
 
-            {/* Difficulty Badge + CTA */}
+            {/* Difficulty Badge + CTA - Mobile First Responsive */}
             <motion.div
-              className='flex shrink-0 items-center justify-between'
+              className='flex shrink-0 justify-between sm:flex-row sm:items-center'
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.2 }}
             >
-              <div className={`rounded-full border px-3 py-1 text-xs font-medium ${difficultyClass}`}>
+              <div className={`w-fit rounded-full border px-3 py-1 text-xs font-medium ${difficultyClass}`}>
                 {difficultyLabel}
               </div>
               <div className='flex items-center gap-2'>
@@ -177,13 +190,13 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                   <Timer timeRemaining={remainingTime || 0} totalTime={quiz.time_limit * 60} onTimeUp={handleTimeUp} />
                 ) : null}
                 <motion.div
-                  className='text-primary flex items-center text-sm font-medium'
+                  className='text-primary flex items-center text-xs font-medium sm:text-sm'
                   whileHover={{ x: 4 }}
                   transition={{ duration: 0.2 }}
                 >
                   {currentAttempt?.id ? 'Continue' : 'Start Quiz'}
                   <motion.svg
-                    className='ml-1 h-4 w-4'
+                    className='ml-1 h-3.5 w-3.5 sm:h-4 sm:w-4'
                     fill='none'
                     stroke='currentColor'
                     viewBox='0 0 24 24'

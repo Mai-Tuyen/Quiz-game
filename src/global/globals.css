@@ -62,10 +62,32 @@ html {
   scroll-behavior: smooth;
 }
 
+@media screen and (max-width: 768px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+/* Mobile-first: Disable scroll-behavior smooth on mobile for better performance */
+@media (max-width: 768px) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Full screen hero section */
 #hero {
   height: 100vh;
   height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+/* Mobile touch optimization */
+@media (hover: none) and (pointer: coarse) {
+  /* Optimize buttons for touch on mobile */
+  button,
+  a {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
 /* Custom gradient backgrounds */

@@ -54,22 +54,22 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className='group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md'
+      className='group overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md sm:rounded-xl'
     >
       <div className='flex min-h-0 flex-row items-stretch gap-0 sm:gap-4'>
-        {/* Quiz image */}
-        <div className='relative w-28 shrink-0 overflow-hidden rounded-l-xl bg-gray-100 sm:w-36'>
+        {/* Quiz image - Mobile First Responsive */}
+        <div className='relative w-20 shrink-0 overflow-hidden rounded-l-lg bg-gray-100 sm:w-28 sm:rounded-l-xl md:w-36'>
           {quiz.image_url ? (
             <Image
               src={quiz.image_url}
               alt={quiz.title}
               fill
               className='object-cover transition-transform duration-300 group-hover:scale-105'
-              sizes='(max-width: 640px) 112px, 144px'
+              sizes='(max-width: 640px) 80px, (max-width: 768px) 112px, 144px'
             />
           ) : (
             <div className='flex h-full w-full items-center justify-center text-gray-400'>
-              <svg className='h-10 w-10' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+              <svg className='h-8 w-8 sm:h-10 sm:w-10' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
@@ -81,15 +81,22 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
           )}
         </div>
 
-        {/* Title, score, status */}
-        <div className='flex min-w-0 flex-1 flex-col justify-center gap-1 px-4 py-3 sm:gap-2 sm:py-4'>
-          <h2 className='line-clamp-2 truncate text-base font-semibold text-gray-900 sm:text-lg'>{quiz.title}</h2>
-          <div className='text-sm text-gray-600'>Date: {dayjs(quizAttempt.start_time).format('DD/MM/YYYY HH:mm')}</div>
-          <div className='flex flex-wrap items-center gap-3'>
-            <span className='w-20 text-sm text-gray-600'>
-              Score: <span className='font-medium text-gray-900'>{scoreLabel}</span>
+        {/* Title, score, status - Mobile First Responsive */}
+        <div className='flex min-w-0 flex-1 flex-col justify-center gap-1 px-3 py-2.5 sm:gap-2 sm:px-4 sm:py-3 md:py-4'>
+          <h2 className='line-clamp-1 truncate text-sm font-semibold text-gray-900 sm:line-clamp-2 sm:text-base md:text-lg'>
+            {quiz.title}
+          </h2>
+          <div className='text-xs text-gray-600 sm:text-sm'>
+            {dayjs(quizAttempt.start_time).format('DD/MM/YYYY HH:mm')}
+          </div>
+          <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
+            <span className='text-xs text-gray-600 sm:text-sm'>
+              <span className='hidden sm:inline'>Score: </span>
+              <span className='font-medium text-gray-900'>{scoreLabel}</span>
             </span>
-            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusClass}`}>
+            <span
+              className={`rounded-full border px-2 py-0.5 text-[10px] font-medium sm:px-2.5 sm:text-xs ${statusClass}`}
+            >
               {statusLabel}
             </span>
             {!isCompleted && (
@@ -98,15 +105,20 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
           </div>
         </div>
 
-        {/* Actions: timer + continue when incomplete, view result when complete */}
-        <div className='flex shrink-0 items-center gap-2 border-l border-gray-100 px-4 py-3 sm:px-5'>
+        {/* Actions - Mobile First Responsive */}
+        <div className='flex shrink-0 items-center gap-1.5 border-l border-gray-100 px-2.5 py-2.5 sm:gap-2 sm:px-4 sm:py-3 md:px-5'>
           {isCompleted ? (
-            <Button className='w-20 cursor-pointer' variant='outline' size='sm' asChild>
+            <Button
+              className='h-8 w-16 cursor-pointer text-xs sm:h-9 sm:w-20 sm:text-sm'
+              variant='outline'
+              size='sm'
+              asChild
+            >
               <Link href={`/quizzes/${quiz.slug}/info`}>Retry</Link>
             </Button>
           ) : (
             <>
-              <Button className='w-20 cursor-pointer' size='sm' asChild>
+              <Button className='h-8 w-16 cursor-pointer text-xs sm:h-9 sm:w-20 sm:text-sm' size='sm' asChild>
                 <Link href={`/quizzes/${quiz.slug}`}>Continue</Link>
               </Button>
             </>

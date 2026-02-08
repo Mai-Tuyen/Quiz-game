@@ -13,13 +13,16 @@ export default function MyQuizzesView() {
 
   if (isQuizAttemptsLoading) {
     return (
-      <div className='mx-auto max-w-3xl px-4 py-8'>
-        <div className='mb-8'>
-          <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
+      <div className='mx-auto max-w-3xl px-4 py-6 sm:py-8'>
+        <div className='mb-6 sm:mb-8'>
+          <h1 className='text-xl font-bold text-gray-900 sm:text-2xl'>My Quizzes</h1>
         </div>
-        <div className='space-y-3'>
+        <div className='space-y-2.5 sm:space-y-3'>
           {[1, 2, 3].map((i) => (
-            <div key={i} className='h-28 animate-pulse rounded-xl border border-gray-200 bg-gray-50 sm:h-32' />
+            <div
+              key={i}
+              className='h-24 animate-pulse rounded-lg border border-gray-200 bg-gray-50 sm:h-28 sm:rounded-xl md:h-32'
+            />
           ))}
         </div>
       </div>
@@ -28,10 +31,10 @@ export default function MyQuizzesView() {
 
   if (quizAttemptsError) {
     return (
-      <div className='mx-auto max-w-3xl px-4 py-8'>
-        <div className='rounded-xl border border-red-200 bg-red-50 p-6 text-center'>
-          <p className='font-medium text-red-800'>Failed to load your quizzes</p>
-          <p className='mt-1 text-sm text-red-600'>{quizAttemptsError.message}</p>
+      <div className='mx-auto max-w-3xl px-4 py-6 sm:py-8'>
+        <div className='rounded-lg border border-red-200 bg-red-50 p-4 text-center sm:rounded-xl sm:p-6'>
+          <p className='text-sm font-medium text-red-800 sm:text-base'>Failed to load your quizzes</p>
+          <p className='mt-1 text-xs text-red-600 sm:text-sm'>{quizAttemptsError.message}</p>
         </div>
       </div>
     )
@@ -39,18 +42,18 @@ export default function MyQuizzesView() {
 
   if (!quizAttempts?.length) {
     return (
-      <div className='mx-auto max-w-3xl px-4 py-8'>
-        <div className='mb-8'>
-          <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
+      <div className='mx-auto max-w-3xl px-4 py-6 sm:py-8'>
+        <div className='mb-6 sm:mb-8'>
+          <h1 className='text-xl font-bold text-gray-900 sm:text-2xl'>My Quizzes</h1>
         </div>
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className='flex flex-col items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50/50 py-16 text-center'
+          className='flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 py-12 text-center sm:rounded-xl sm:py-16'
         >
-          <div className='mb-4 text-5xl text-gray-400'>📝</div>
-          <h2 className='text-lg font-semibold text-gray-700'>No quizzes yet</h2>
-          <p className='mt-1 max-w-sm text-sm text-gray-500'>
+          <div className='mb-3 text-4xl text-gray-400 sm:mb-4 sm:text-5xl'>📝</div>
+          <h2 className='text-base font-semibold text-gray-700 sm:text-lg'>No quizzes yet</h2>
+          <p className='mt-1 max-w-sm px-4 text-xs text-gray-500 sm:text-sm'>
             Start a quiz from a category to see your attempts and scores here.
           </p>
         </motion.div>
@@ -59,11 +62,11 @@ export default function MyQuizzesView() {
   }
 
   return (
-    <div className='mx-auto max-w-3xl px-4 py-8'>
-      <div className='mb-8'>
-        <h1 className='text-2xl font-bold text-gray-900'>My Quizzes</h1>
+    <div className='mx-auto max-w-3xl px-4 py-6 sm:py-8'>
+      <div className='mb-6 sm:mb-8'>
+        <h1 className='text-xl font-bold text-gray-900 sm:text-2xl'>My Quizzes</h1>
       </div>
-      <ul className='space-y-3'>
+      <ul className='space-y-2.5 sm:space-y-3'>
         {quizAttempts.map((quizAttempt, index) => (
           <li key={quizAttempt.id}>
             <MyQuizLine quizAttempt={quizAttempt} index={index} />

@@ -77,16 +77,16 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
 
   if (isLoading) {
     return (
-      <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50'>
+      <div className='flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 px-4'>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
           className='text-center'
         >
-          <div className='mb-4 animate-spin text-6xl'>📊</div>
-          <h1 className='mb-2 text-2xl font-bold text-gray-900'>Loading Results...</h1>
-          <div className='mx-auto h-8 w-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent'></div>
+          <div className='mb-4 animate-spin text-4xl sm:text-5xl md:text-6xl'>📊</div>
+          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>Loading Results...</h1>
+          <div className='mx-auto h-6 w-6 animate-spin rounded-full border-4 border-blue-500 border-t-transparent sm:h-8 sm:w-8'></div>
         </motion.div>
       </div>
     )
@@ -94,19 +94,19 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
 
   if (error) {
     return (
-      <div className='flex min-h-screen items-center justify-center bg-gray-50'>
+      <div className='flex min-h-screen items-center justify-center bg-gray-50 px-4'>
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className='mx-auto max-w-md p-8 text-center'
+          className='mx-auto max-w-md p-6 text-center sm:p-8'
         >
-          <div className='mb-4 text-6xl'>😞</div>
-          <h1 className='mb-2 text-2xl font-bold text-gray-900'>Oops!</h1>
-          <p className='mb-6 text-gray-600'>{error.message}</p>
+          <div className='mb-4 text-4xl sm:text-5xl md:text-6xl'>😞</div>
+          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>Oops!</h1>
+          <p className='mb-6 text-sm text-gray-600 sm:text-base'>{error.message}</p>
           <motion.button
             onClick={() => router.push('/')}
-            className='rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-blue-700'
+            className='rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-blue-700 sm:px-6 sm:py-3 sm:text-base'
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -126,8 +126,8 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
       {/* Fireworks Animation */}
       {showFireworks && <FireworksAnimation />}
 
-      <div className='container mx-auto px-4 py-8'>
-        {/* Main Score Display */}
+      <div className='container mx-auto px-4 py-6 sm:py-8 md:py-10'>
+        {/* Main Score Display - Mobile First Responsive */}
         <ScoreDisplay
           quizSlug={attempt?.quiz?.slug}
           score={attempt.score}

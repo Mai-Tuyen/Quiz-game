@@ -80,7 +80,7 @@ export default function CategoriesGridAnimated({ categories, sectionIndex = 1 }:
       />
       <motion.div
         variants={containerVariants}
-        className='relative grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+        className='relative grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:gap-6 lg:grid-cols-3 xl:grid-cols-4'
       >
         {categories.map((category) => (
           <motion.div key={category.id} variants={itemVariants}>
