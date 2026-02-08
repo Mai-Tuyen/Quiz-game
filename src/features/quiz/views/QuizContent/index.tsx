@@ -7,11 +7,13 @@ import {
   useSubmitQuizAttemptMutation,
   useUpsertUserAnswerMutation
 } from '@/features/quiz/hooks/query'
+import Timer from '@/features/quiz/views/components/Timer'
 import NavigationControls from '@/features/quiz/views/QuizContent/NavigationControls'
 import QuestionDisplay from '@/features/quiz/views/QuizContent/QuestionDisplay'
 import QuestionMatrix from '@/features/quiz/views/QuizContent/QuestionMatrix'
 import TimerRight from '@/features/quiz/views/QuizContent/TimerRight'
 import QuizLoading from '@/features/quiz/views/QuizLoading'
+import { Button } from '@/global/components/ui/button'
 import { storage } from '@/global/lib/storage'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
@@ -114,7 +116,18 @@ export default function QuizDetailView() {
   return (
     <div className='min-h-screen bg-gray-50'>
       {/* Quiz Interface */}
-      <div className='flex h-screen'>
+      <div className='header-question-mobile fixed top-14 z-10 flex w-full justify-end gap-2 bg-white p-2 md:hidden'>
+        <Timer timeRemaining={timeRemaining} totalTime={quiz.time_limit * 60} onTimeUp={handleSubmitQuiz} />
+        <Button
+          variant='outline'
+          size='sm'
+          onClick={handleSubmitQuiz}
+          className='bg-green-600 text-white hover:bg-green-700'
+        >
+          Submit Quiz
+        </Button>
+      </div>
+      <div className='mt-10 flex h-screen md:mt-0'>
         {/* Left Panel - Question Content */}
         <div className='flex flex-1 flex-col'>
           {/* Progress Header */}
@@ -151,12 +164,15 @@ export default function QuizDetailView() {
               totalQuestions={quiz.questions.length}
               onPrevious={handlePrevious}
               onNext={handleNext}
+              questions={quiz.questions}
+              answers={allAnswers || []}
+              onQuestionClick={handleQuestionNavigation}
             />
           </div>
         </div>
 
         {/* Right Panel - Quiz Controls */}
-        <div className='flex w-80 flex-col border-l border-gray-200 bg-white'>
+        <div className='flex hidden w-80 flex-col border-l border-gray-200 bg-white md:flex'>
           {/* Timer */}
           <div className='p-4'>
             <TimerRight timeRemaining={timeRemaining} totalTime={quiz.time_limit * 60} onTimeUp={handleSubmitQuiz} />
