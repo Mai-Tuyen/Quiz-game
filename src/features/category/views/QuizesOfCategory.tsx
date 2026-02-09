@@ -2,24 +2,14 @@ import { getCategoryBySlugAPI } from '@/features/category'
 import MotionWrapper from '@/features/category/views/components/MotionWrapper'
 import { getQuizzesByCategoryAPI, QuizCard } from '@/features/quiz'
 import BackToHome from '@/global/components/BackToHome'
-import SEO from '@/global/components/common/SEO'
 
 export default async function CategoryQuizzesPage({ categorySlug }: { categorySlug: string }) {
   const [category, quizzes] = await Promise.all([
     getCategoryBySlugAPI(categorySlug),
     getQuizzesByCategoryAPI(categorySlug)
   ])
-
-  const seoData = {
-    title: `${category?.name} | ZoloQuiz`,
-    description: category?.description || '',
-    url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://yourdomain.com'}/categories/${categorySlug}`,
-    thumbnailUrl: category?.icon_url || ''
-  }
-
   return (
     <>
-      <SEO data={seoData} />
       <div className='min-h-screen bg-linear-to-br from-gray-50 to-blue-50/30'>
         <MotionWrapper>
           <div className='mb-12 text-center'>
