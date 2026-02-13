@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
+import { useTranslations } from 'next-intl'
 type IProps = {
   slug: string
 }
@@ -12,6 +13,7 @@ export default function QuizStartInfo({ slug }: IProps) {
   const router = useRouter()
   const queryClient = useQueryClient()
   const createStartedRef = useRef(false)
+  const t = useTranslations()
   const { data: quizStartInfo } = useGetQuizStartInfoQuery(slug)
   const { mutate: createQuizAttempt, isPending: isCreatingAttempt } = useCreateQuizAttemptMutation()
   const userId = storage.get('user')?.id
@@ -53,15 +55,17 @@ export default function QuizStartInfo({ slug }: IProps) {
         <div className='mb-8 grid grid-cols-3 gap-4'>
           <div className='rounded-lg bg-blue-50 p-4'>
             <div className='text-2xl font-bold text-blue-600'>{quizStartInfo?.question_count ?? 0}</div>
-            <div className='text-sm text-gray-600'>Questions</div>
+            <div className='text-sm text-gray-600'>{t('QuizStartInfo.questions')}</div>
           </div>
           <div className='rounded-lg bg-green-50 p-4'>
             <div className='text-2xl font-bold text-green-600'>{quizStartInfo?.time_limit ?? 0}</div>
-            <div className='text-sm text-gray-600'>Minutes</div>
+            <div className='text-sm text-gray-600'>{t('QuizStartInfo.minutes')}</div>
           </div>
           <div className='rounded-lg bg-purple-50 p-4'>
-            <div className='text-2xl font-bold text-purple-600'>Level {quizStartInfo?.difficulty_level}</div>
-            <div className='text-sm text-gray-600'>Difficulty</div>
+            <div className='text-2xl font-bold text-purple-600'>
+              {t('QuizStartInfo.level')} {quizStartInfo?.difficulty_level}
+            </div>
+            <div className='text-sm text-gray-600'>{t('QuizStartInfo.difficulty')}</div>
           </div>
         </div>
 
@@ -75,10 +79,10 @@ export default function QuizStartInfo({ slug }: IProps) {
           {isCreatingAttempt ? (
             <span className='flex items-center justify-center gap-2'>
               <span className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent' />
-              Starting...
+              {t('QuizStartInfo.starting')}
             </span>
           ) : (
-            'Start Quiz'
+            t('QuizStartInfo.startQuiz')
           )}
         </motion.button>
       </motion.div>

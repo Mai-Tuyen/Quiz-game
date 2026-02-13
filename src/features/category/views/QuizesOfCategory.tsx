@@ -2,11 +2,13 @@ import { getCategoryBySlugAPI } from '@/features/category'
 import MotionWrapper from '@/features/category/views/components/MotionWrapper'
 import { getQuizzesByCategoryAPI, QuizCard } from '@/features/quiz'
 import BackToHome from '@/global/components/common/BackToHome'
+import { getTranslations } from 'next-intl/server'
 
 export default async function CategoryQuizzesPage({ categorySlug }: { categorySlug: string }) {
-  const [category, quizzes] = await Promise.all([
+  const [category, quizzes, t] = await Promise.all([
     getCategoryBySlugAPI(categorySlug),
-    getQuizzesByCategoryAPI(categorySlug)
+    getQuizzesByCategoryAPI(categorySlug),
+    getTranslations()
   ])
   return (
     <>
@@ -18,7 +20,7 @@ export default async function CategoryQuizzesPage({ categorySlug }: { categorySl
                 {category?.icon_url}
               </div>
               <h1 className='mb-4 text-4xl font-bold text-gray-900 transition-all duration-200 hover:scale-102'>
-                {category?.name} Quizzes
+                {category?.name} {t('CategoryPage.quizzes')}
               </h1>
               <p className='mx-auto max-w-2xl text-lg text-gray-600'>{category?.description}</p>
             </>

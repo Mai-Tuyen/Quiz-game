@@ -3,5 +3,104 @@
     "vi": "Vietnamese",
     "en": "English"
   },
-  "Common": {}
+  "Common": {
+    "login": "Login",
+    "home": "Home",
+    "backToHome": "Back to Home",
+    "signOut": "Sign Out",
+    "myQuizzes": "My Quizzes",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "of": "of",
+    "questions": "Questions",
+    "totalTime": "Total"
+  },
+  "Header": {
+    "knowMoreDaily": "Know more daily"
+  },
+  "Footer": {
+    "copyright": "© 2025 MaiTuyen. All rights reserved."
+  },
+  "HomePage": {
+    "scrollToExplore": "Scroll to explore",
+    "readyToTest": "Ready to Test Your Knowledge?",
+    "pickCategory": "Pick a category above and start your quiz journey",
+    "andMore": "And More!"
+  },
+  "CategoryPage": {
+    "quizzes": "Quizzes"
+  },
+  "QuizStartInfo": {
+    "questions": "Questions",
+    "minutes": "Minutes",
+    "difficulty": "Difficulty",
+    "level": "Level",
+    "startQuiz": "Start Quiz",
+    "starting": "Starting..."
+  },
+  "QuizCard": {
+    "questions": "Questions",
+    "minutes": "min",
+    "startQuiz": "Start Quiz",
+    "continue": "Continue",
+    "beginner": "Beginner",
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "expert": "Expert",
+    "quizSubmittedSuccess": "Quiz submitted successfully"
+  },
+  "QuizContent": {
+    "previous": "Previous",
+    "next": "Next",
+    "lastQuestion": "Last Question",
+    "submit": "Submit",
+    "timeRemaining": "Time Remaining",
+    "questionMatrix": "Question Matrix",
+    "answered": "Answered",
+    "notAnswered": "Not Answered",
+    "submitQuiz": "Submit Quiz",
+    "submitting": "Submitting...",
+    "question": "Question",
+    "legend": "Legend",
+    "currentQuestion": "Current Question"
+  },
+  "MyQuizzes": {
+    "title": "My Quizzes",
+    "noQuizzes": "No quizzes yet",
+    "noQuizzesDescription": "Start a quiz from a category to see your attempts and scores here.",
+    "failedToLoad": "Failed to load your quizzes",
+    "score": "Score",
+    "time": "Time",
+    "completed": "Completed",
+    "inProgress": "In Progress",
+    "viewResults": "View Results",
+    "continue": "Continue"
+  },
+  "Result": {
+    "loadingResults": "Loading Results...",
+    "oops": "Oops!",
+    "yourResults": "Your Results",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "noQuestionsCompleted": "No questions completed",
+    "perfectScore": "Perfect! Outstanding work! 🎉",
+    "excellentScore": "Excellent! You're doing great! 🌟",
+    "veryGoodScore": "Very Good! Well done! 👏",
+    "goodScore": "Good job! Keep it up! 👍",
+    "notBadScore": "Not bad! Room for improvement 📚",
+    "keepPracticing": "Keep practicing! You'll get better! 💪"
+  },
+  "Auth": {
+    "welcomeToZoloQuiz": "Welcome to Zolo Quiz",
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Signing in...",
+    "secureAuthentication": "Secure Authentication",
+    "termsAndPrivacy": "By continuing, you agree to our Terms of Service and Privacy Policy"
+  },
+  "Error": {
+    "somethingWentWrong": "Something Went Wrong",
+    "pageNotFound": "Oops! Page Not Found",
+    "pageNotFoundDescription": "The page you're looking for doesn't exist or has been moved."
+  }
 }

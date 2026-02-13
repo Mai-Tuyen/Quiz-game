@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 interface Question {
   id: string
@@ -22,6 +23,7 @@ export default function QuestionMatrix({
   answers,
   onQuestionClick
 }: QuestionMatrixProps) {
+  const t = useTranslations()
   const getQuestionStatus = (question: Question, index: number) => {
     const hasAnswer = answers?.some((answer: any) => answer.question_id === question.id)
     const isCurrent = index === currentQuestionIndex
@@ -53,7 +55,7 @@ export default function QuestionMatrix({
     <div className='space-y-6'>
       {/* Question Grid */}
       <div>
-        <h3 className='mb-3 font-semibold text-gray-900'>Questions</h3>
+        <h3 className='mb-3 font-semibold text-gray-900'>{t('Common.questions')}</h3>
         <div className='grid grid-cols-5 gap-2'>
           {questions.map((question, index) => {
             const status = getQuestionStatus(question, index)
@@ -85,19 +87,19 @@ export default function QuestionMatrix({
         transition={{ delay: 0.3, duration: 0.4 }}
         className='rounded-lg bg-gray-50 p-4'
       >
-        <h4 className='mb-3 text-sm font-medium text-gray-900'>Legend</h4>
+        <h4 className='mb-3 text-sm font-medium text-gray-900'>{t('QuizContent.legend')}</h4>
         <div className='space-y-2 text-xs'>
           <div className='flex items-center gap-2'>
             <div className='h-4 w-4 rounded border bg-blue-500'></div>
-            <span className='text-gray-600'>Current Question</span>
+            <span className='text-gray-600'>{t('QuizContent.currentQuestion')}</span>
           </div>
           <div className='flex items-center gap-2'>
             <div className='h-4 w-4 rounded border bg-green-500'></div>
-            <span className='text-gray-600'>Answered</span>
+            <span className='text-gray-600'>{t('QuizContent.answered')}</span>
           </div>
           <div className='flex items-center gap-2'>
             <div className='h-4 w-4 rounded border border-gray-300 bg-white'></div>
-            <span className='text-gray-600'>Not Answered</span>
+            <span className='text-gray-600'>{t('QuizContent.notAnswered')}</span>
           </div>
         </div>
       </motion.div>

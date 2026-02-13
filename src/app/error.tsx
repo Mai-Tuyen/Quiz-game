@@ -1,8 +1,10 @@
 'use client'
 import Link from 'next/link'
 import React from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function Error() {
+  const t = useTranslations()
   return (
     <div className='bg-background flex min-h-screen flex-col items-center justify-center p-4'>
       <div className='max-w-md space-y-8 text-center'>
@@ -23,7 +25,7 @@ export default function Error() {
               />
             </svg>
           </div>
-          <h2 className='text-foreground text-3xl font-semibold'>Something Went Wrong</h2>
+          <h2 className='text-foreground text-3xl font-semibold'>{t('Error.somethingWentWrong')}</h2>
         </div>
         <Link
           href='/'
@@ -38,7 +40,7 @@ export default function Error() {
           >
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l-7-7m0 0l7-7m-7 7h18' />
           </svg>
-          Back to Home
+          {t('Common.backToHome')}
         </Link>
       </div>
     </div>

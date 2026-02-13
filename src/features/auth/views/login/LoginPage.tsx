@@ -6,12 +6,14 @@ import { useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { FcGoogle } from 'react-icons/fc'
 import { toast } from 'react-toastify'
+import { useTranslations } from 'next-intl'
 
 export function LoginPage() {
   const searchParams = useSearchParams()
   const nextUrl = searchParams.get('next')
   const [isLoading, setIsLoading] = useState(false)
   const supabase = createClient()
+  const t = useTranslations()
 
   const handleGoogleSignIn = async () => {
     try {
@@ -40,7 +42,7 @@ export function LoginPage() {
         <div className='space-y-2 text-center sm:space-y-3'>
           <div className='flex flex-col items-center justify-center gap-2 bg-linear-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent sm:text-2xl'>
             <Image src='/images/logo.png' alt='Logo' width={30} height={30} className='sm:h-10 sm:w-10' />
-            Welcome to Zolo Quiz
+            {t('Auth.welcomeToZoloQuiz')}
           </div>
         </div>
 
@@ -53,12 +55,12 @@ export function LoginPage() {
             {isLoading ? (
               <div className='flex items-center gap-2'>
                 <div className='h-4 w-4 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600 sm:h-5 sm:w-5' />
-                <span>Signing in...</span>
+                <span>{t('Auth.signingIn')}</span>
               </div>
             ) : (
               <div className='flex items-center gap-2 sm:gap-3'>
                 <FcGoogle className='h-4 w-4 sm:h-5 sm:w-5' />
-                <span>Continue with Google</span>
+                <span>{t('Auth.continueWithGoogle')}</span>
               </div>
             )}
           </Button>
@@ -68,12 +70,12 @@ export function LoginPage() {
               <div className='w-full border-t border-slate-200' />
             </div>
             <div className='relative flex justify-center text-xs uppercase'>
-              <span className='bg-white/80 px-2 text-slate-500'>Secure Authentication</span>
+              <span className='bg-white/80 px-2 text-slate-500'>{t('Auth.secureAuthentication')}</span>
             </div>
           </div>
 
           <p className='px-3 text-center text-[10px] text-slate-500 sm:px-4 sm:text-xs'>
-            By continuing, you agree to our Terms of Service and Privacy Policy
+            {t('Auth.termsAndPrivacy')}
           </p>
         </div>
       </div>

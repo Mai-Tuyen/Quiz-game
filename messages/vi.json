@@ -3,5 +3,104 @@
     "vi": "Tiếng việt",
     "en": "English"
   },
-  "Common": {}
+  "Common": {
+    "login": "Đăng nhập",
+    "home": "Trang chủ",
+    "backToHome": "Trở về trang chủ",
+    "signOut": "Đăng xuất",
+    "myQuizzes": "Bài quiz của tôi",
+    "loading": "Đang tải...",
+    "retry": "Thử lại",
+    "of": "trên",
+    "questions": "Câu hỏi",
+    "totalTime": "Thời gian"
+  },
+  "Header": {
+    "knowMoreDaily": "Học hỏi mỗi ngày"
+  },
+  "Footer": {
+    "copyright": "© 2025 MaiTuyen. Tất cả quyền được bảo lưu."
+  },
+  "HomePage": {
+    "scrollToExplore": "Cuộn để khám phá",
+    "readyToTest": "Sẵn sàng kiểm tra kiến thức?",
+    "pickCategory": "Chọn một danh mục và bắt đầu hành trình quiz của bạn",
+    "andMore": "Và nhiều hơn nữa!"
+  },
+  "CategoryPage": {
+    "quizzes": "quiz"
+  },
+  "QuizStartInfo": {
+    "questions": "Câu hỏi",
+    "minutes": "Phút",
+    "difficulty": "Độ khó",
+    "level": "Cấp độ",
+    "startQuiz": "Bắt đầu",
+    "starting": "Đang bắt đầu..."
+  },
+  "QuizCard": {
+    "questions": "Câu hỏi",
+    "minutes": "phút",
+    "startQuiz": "Bắt đầu làm bài",
+    "continue": "Tiếp tục",
+    "beginner": "Mới bắt đầu",
+    "easy": "Dễ",
+    "medium": "Trung bình",
+    "hard": "Khó",
+    "expert": "Chuyên gia",
+    "quizSubmittedSuccess": "Nộp bài thành công"
+  },
+  "QuizContent": {
+    "previous": "Trước",
+    "next": "Tiếp",
+    "lastQuestion": "Câu cuối",
+    "submit": "Nộp bài",
+    "timeRemaining": "Thời gian còn lại",
+    "questionMatrix": "Ma trận câu hỏi",
+    "answered": "Đã trả lời",
+    "notAnswered": "Chưa trả lời",
+    "submitQuiz": "Nộp bài",
+    "submitting": "Đang nộp...",
+    "question": "Câu hỏi",
+    "legend": "Chú thích",
+    "currentQuestion": "Câu hỏi hiện tại"
+  },
+  "MyQuizzes": {
+    "title": "Bài quiz của tôi",
+    "noQuizzes": "Chưa có bài quiz nào",
+    "noQuizzesDescription": "Bắt đầu một bài quiz từ danh mục để xem các lần làm bài và điểm số của bạn tại đây.",
+    "failedToLoad": "Không thể tải bài quiz của bạn",
+    "score": "Điểm",
+    "time": "Thời gian",
+    "completed": "Đã hoàn thành",
+    "inProgress": "Đang làm",
+    "viewResults": "Xem kết quả",
+    "continue": "Tiếp tục"
+  },
+  "Result": {
+    "loadingResults": "Đang tải kết quả...",
+    "oops": "Ối!",
+    "yourResults": "Kết quả của bạn",
+    "correct": "Đúng",
+    "incorrect": "Sai",
+    "noQuestionsCompleted": "Chưa hoàn thành câu hỏi nào",
+    "perfectScore": "Hoàn hảo! Xuất sắc! 🎉",
+    "excellentScore": "Tuyệt vời! Bạn làm rất tốt! 🌟",
+    "veryGoodScore": "Rất tốt! Làm tốt lắm! 👏",
+    "goodScore": "Tốt! Cố gắng lên! 👍",
+    "notBadScore": "Không tệ! Còn chỗ cải thiện 📚",
+    "keepPracticing": "Cứ luyện tập! Bạn sẽ giỏi hơn! 💪"
+  },
+  "Auth": {
+    "welcomeToZoloQuiz": "Chào mừng đến với Zolo Quiz",
+    "continueWithGoogle": "Tiếp tục với Google",
+    "signingIn": "Đang đăng nhập...",
+    "secureAuthentication": "Xác thực an toàn",
+    "termsAndPrivacy": "Bằng cách tiếp tục, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi"
+  },
+  "Error": {
+    "somethingWentWrong": "Đã xảy ra lỗi",
+    "pageNotFound": "Ối! Không tìm thấy trang",
+    "pageNotFoundDescription": "Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển."
+  }
 }

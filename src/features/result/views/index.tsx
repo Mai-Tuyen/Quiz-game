@@ -8,9 +8,11 @@ import ScoreDisplay from '@/features/result/views/ScoreDisplay'
 import FireworksAnimation from '@/features/result/views/FireworksAnimation'
 import { AttemptWithDetails } from '@/features/result/type'
 import { useGetAttemptWithResultsQuery } from '@/features/result/hooks/query'
+import { useTranslations } from 'next-intl'
 
 export default function QuizResultPage({ attemptId }: { attemptId: string }) {
   const router = useRouter()
+  const t = useTranslations()
   const [showFireworks, setShowFireworks] = useState(false)
   const { data: attempt, isLoading: isLoading, error: error } = useGetAttemptWithResultsQuery(attemptId)
 
@@ -63,16 +65,16 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
   }
 
   const getPerformanceMessage = (score: number, maxScore: number) => {
-    if (maxScore === 0) return 'No questions completed'
+    if (maxScore === 0) return t('Result.noQuestionsCompleted')
 
     const percentage = (score / maxScore) * 100
 
-    if (percentage === 100) return 'Perfect! Outstanding work! 🎉'
-    if (percentage >= 90) return "Excellent! You're doing great! 🌟"
-    if (percentage >= 80) return 'Very Good! Well done! 👏'
-    if (percentage >= 70) return 'Good job! Keep it up! 👍'
-    if (percentage >= 60) return 'Not bad! Room for improvement 📚'
-    return "Keep practicing! You'll get better! 💪"
+    if (percentage === 100) return t('Result.perfectScore')
+    if (percentage >= 90) return t('Result.excellentScore')
+    if (percentage >= 80) return t('Result.veryGoodScore')
+    if (percentage >= 70) return t('Result.goodScore')
+    if (percentage >= 60) return t('Result.notBadScore')
+    return t('Result.keepPracticing')
   }
 
   if (isLoading) {
@@ -85,7 +87,7 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
           className='text-center'
         >
           <div className='mb-4 animate-spin text-4xl sm:text-5xl md:text-6xl'>📊</div>
-          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>Loading Results...</h1>
+          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>{t('Result.loadingResults')}</h1>
           <div className='mx-auto h-6 w-6 animate-spin rounded-full border-4 border-blue-500 border-t-transparent sm:h-8 sm:w-8'></div>
         </motion.div>
       </div>
@@ -102,7 +104,7 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
           className='mx-auto max-w-md p-6 text-center sm:p-8'
         >
           <div className='mb-4 text-4xl sm:text-5xl md:text-6xl'>😞</div>
-          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>Oops!</h1>
+          <h1 className='mb-2 text-xl font-bold text-gray-900 sm:text-2xl'>{t('Result.oops')}</h1>
           <p className='mb-6 text-sm text-gray-600 sm:text-base'>{error.message}</p>
           <motion.button
             onClick={() => router.push('/')}
@@ -110,7 +112,7 @@ export default function QuizResultPage({ attemptId }: { attemptId: string }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            Back to Home
+            {t('Common.backToHome')}
           </motion.button>
         </motion.div>
       </div>

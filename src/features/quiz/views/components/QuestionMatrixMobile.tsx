@@ -2,7 +2,7 @@
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/global/components/ui/sheet'
 import { motion } from 'framer-motion'
-
+import { useTranslations } from 'next-intl'
 interface Question {
   id: string
   question_text: string
@@ -27,6 +27,7 @@ export default function QuestionMatrixMobile({
   answers,
   onQuestionClick
 }: QuestionMatrixMobileProps) {
+  const t = useTranslations()
   const getQuestionStatus = (question: Question, index: number) => {
     const hasAnswer = answers?.some((answer: any) => answer.question_id === question.id)
     const isCurrent = index === currentQuestionIndex
@@ -62,7 +63,7 @@ export default function QuestionMatrixMobile({
           <SheetTitle>Question navigator</SheetTitle>
         </SheetHeader>
         <div className='flex h-full flex-col overflow-hidden'>
-          <h3 className='mb-3 text-sm font-semibold text-gray-900'>Questions</h3>
+          <h3 className='mb-3 text-sm font-semibold text-gray-900'>{t('Common.questions')}</h3>
           <div className='min-h-0 flex-1 overflow-y-auto'>
             <div className='flex flex-wrap gap-4'>
               {questions.map((question, index) => {
@@ -89,15 +90,15 @@ export default function QuestionMatrixMobile({
             <div className='flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-xs'>
               <div className='flex items-center gap-1.5'>
                 <div className='h-3 w-3 rounded border bg-blue-500' />
-                <span className='text-gray-600'>Current</span>
+                <span className='text-gray-600'>{t('QuizContent.currentQuestion')}</span>
               </div>
               <div className='flex items-center gap-1.5'>
                 <div className='h-3 w-3 rounded border bg-green-500' />
-                <span className='text-gray-600'>Answered</span>
+                <span className='text-gray-600'>{t('QuizContent.answered')}</span>
               </div>
               <div className='flex items-center gap-1.5'>
                 <div className='h-3 w-3 rounded border border-gray-300 bg-white' />
-                <span className='text-gray-600'>Not answered</span>
+                <span className='text-gray-600'>{t('QuizContent.notAnswered')}</span>
               </div>
             </div>
           </div>

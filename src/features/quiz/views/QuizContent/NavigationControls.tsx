@@ -4,6 +4,7 @@ import QuestionMatrixMobile from '@/features/quiz/views/components/QuestionMatri
 import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { CiGrid41 } from 'react-icons/ci'
+import { useTranslations } from 'next-intl'
 
 interface Question {
   id: string
@@ -31,6 +32,7 @@ export default function NavigationControls({
   answers = [],
   onQuestionClick = () => {}
 }: NavigationControlsProps) {
+  const t = useTranslations()
   const isFirstQuestion = currentIndex === 0
   const isLastQuestion = currentIndex === totalQuestions - 1
   const [isShowSheetQuestionMatrix, setIsShowSheetQuestionMatrix] = useState(false)
@@ -58,14 +60,14 @@ export default function NavigationControls({
           >
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
           </svg>
-          Previous
+          {t('QuizContent.previous')}
         </motion.button>
 
         {/* Center Controls */}
         <div className='flex items-center gap-4'>
           {/* Question Counter */}
           <div className='rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600'>
-            {currentIndex + 1} of {totalQuestions}
+            {currentIndex + 1} {t('Common.of')} {totalQuestions}
           </div>
           <div className='md:hidden'>
             <CiGrid41 className='h-6 w-10' onClick={() => setIsShowSheetQuestionMatrix(true)} />
@@ -82,7 +84,7 @@ export default function NavigationControls({
           whileHover={isLastQuestion ? undefined : { scale: 1.02 }}
           whileTap={isLastQuestion ? undefined : { scale: 0.98 }}
         >
-          {isLastQuestion ? 'Last Question' : 'Next'}
+          {isLastQuestion ? t('QuizContent.lastQuestion') : t('QuizContent.next')}
           {!isLastQuestion && (
             <svg className='h-4 w-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
               <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />

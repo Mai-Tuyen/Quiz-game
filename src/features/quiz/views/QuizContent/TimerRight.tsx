@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 
 interface TimerProps {
   timeRemaining: number // in seconds
@@ -11,7 +12,7 @@ interface TimerProps {
 
 export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps) {
   const [currentTime, setCurrentTime] = useState(timeRemaining)
-
+  const t = useTranslations()
   useEffect(() => {
     setCurrentTime(timeRemaining)
   }, [timeRemaining])
@@ -159,7 +160,9 @@ export default function Timer({ timeRemaining, totalTime, onTimeUp }: TimerProps
           />
         </div>
         {/* Total Time Info */}
-        <div className='mt-2 text-xs text-gray-500'>Total: {formatTime(totalTime)}</div>
+        <div className='mt-2 text-xs text-gray-500'>
+          {t('Common.totalTime')}: {formatTime(totalTime)}
+        </div>
       </div>
     </motion.div>
   )

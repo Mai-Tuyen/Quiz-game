@@ -19,8 +19,10 @@ import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function QuizDetailView() {
+  const t = useTranslations()
   const userId = typeof window === 'undefined' ? null : storage.get('user')?.id
   const params = useParams()
   const router = useRouter()
@@ -116,7 +118,7 @@ export default function QuizDetailView() {
   return (
     <div className='min-h-screen bg-gray-50'>
       {/* Quiz Interface */}
-      <div className='header-question-mobile fixed top-14 z-10 flex w-full justify-end gap-2 bg-white p-2 md:hidden'>
+      <div className='header-question-mobile fixed top-[80px] z-10 flex w-full justify-end gap-2 bg-white p-2 md:hidden'>
         <Timer timeRemaining={timeRemaining} totalTime={quiz.time_limit * 60} onTimeUp={handleSubmitQuiz} />
         <Button
           variant='outline'
@@ -124,7 +126,7 @@ export default function QuizDetailView() {
           onClick={handleSubmitQuiz}
           className='bg-green-600 text-white hover:bg-green-700'
         >
-          Submit Quiz
+          {t('QuizContent.submitQuiz')}
         </Button>
       </div>
       <div className='mt-10 flex h-screen md:mt-0'>
@@ -135,7 +137,7 @@ export default function QuizDetailView() {
             <div className='mb-2 flex items-center justify-between'>
               <h1 className='text-lg font-semibold text-gray-900'>{quiz.title}</h1>
               <span className='text-sm text-gray-500'>
-                Question {currentQuestionIndex + 1} of {quiz.questions.length}
+                {t('QuizContent.question')} {currentQuestionIndex + 1} {t('Common.of')} {quiz.questions.length}
               </span>
             </div>
             <div className='h-2 w-full rounded-full bg-gray-200'>
@@ -192,10 +194,10 @@ export default function QuizDetailView() {
                 {isSubmitting ? (
                   <div className='flex items-center justify-center gap-2'>
                     <div className='h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
-                    Submitting...
+                    {t('QuizContent.submitting')}
                   </div>
                 ) : (
-                  'Submit Quiz'
+                  t('QuizContent.submitQuiz')
                 )}
               </motion.button>
             </div>

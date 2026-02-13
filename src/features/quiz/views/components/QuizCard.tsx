@@ -10,6 +10,7 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import { useTranslations } from 'next-intl'
 interface QuizCardProps {
   quiz: Quiz
   index: number
@@ -23,15 +24,8 @@ const difficultyColors = {
   5: 'bg-red-100 text-red-800 border-red-200'
 }
 
-const difficultyLabels = {
-  1: 'Beginner',
-  2: 'Easy',
-  3: 'Medium',
-  4: 'Hard',
-  5: 'Expert'
-}
-
 export default function QuizCard({ quiz, index }: QuizCardProps) {
+  const t = useTranslations()
   const router = useRouter()
   const userId = storage.get('user')?.id
   const { data: currentAttempt, refetch: refetchCurrentAttempt } = useGetCurrentQuizAttemptQuery(quiz.id, !!userId)
@@ -42,7 +36,25 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
   const remainingTime = endTime ? dayjs(endTime).diff(dayjs(), 'second') : null
   const difficultyClass =
     difficultyColors[quiz.difficulty_level as keyof typeof difficultyColors] || difficultyColors[3]
-  const difficultyLabel = difficultyLabels[quiz.difficulty_level as keyof typeof difficultyLabels] || 'Medium'
+
+  const getDifficultyLabel = (level: number) => {
+    switch (level) {
+      case 1:
+        return t('QuizCard.beginner')
+      case 2:
+        return t('QuizCard.easy')
+      case 3:
+        return t('QuizCard.medium')
+      case 4:
+        return t('QuizCard.hard')
+      case 5:
+        return t('QuizCard.expert')
+      default:
+        return t('QuizCard.medium')
+    }
+  }
+
+  const difficultyLabel = getDifficultyLabel(quiz.difficulty_level)
 
   const handleStartQuiz = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -59,13 +71,13 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
     if (!attemptId || isSubmitting) return
     submitQuizAttempt(attemptId, {
       onSuccess: () => {
-        toast.success('Quiz submitted successfully')
+        toast.success(t('QuizCard.quizSubmittedSuccess'))
       },
       onError: (error) => {
         toast.error(error.message)
       }
     })
-  }, [currentAttempt?.id, isSubmitting, submitQuizAttempt, refetchCurrentAttempt])
+  }, [currentAttempt?.id, isSubmitting, submitQuizAttempt, refetchCurrentAttempt, t])
 
   return (
     <motion.div
@@ -149,7 +161,9 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                     />
                   </svg>
                 </div>
-                <span className='text-xs font-medium text-gray-600 sm:text-sm'>{quiz.question_count} Questions</span>
+                <span className='text-xs font-medium text-gray-600 sm:text-sm'>
+                  {quiz.question_count} {t('QuizCard.questions')}
+                </span>
               </motion.div>
 
               <motion.div
@@ -172,7 +186,9 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                     />
                   </svg>
                 </div>
-                <span className='text-xs font-medium text-gray-600 sm:text-sm'>{quiz.time_limit} min</span>
+                <span className='text-xs font-medium text-gray-600 sm:text-sm'>
+                  {quiz.time_limit} {t('QuizCard.minutes')}
+                </span>
               </motion.div>
             </div>
 
@@ -194,7 +210,7 @@ export default function QuizCard({ quiz, index }: QuizCardProps) {
                   whileHover={{ x: 4 }}
                   transition={{ duration: 0.2 }}
                 >
-                  {currentAttempt?.id ? 'Continue' : 'Start Quiz'}
+                  {currentAttempt?.id ? t('QuizCard.continue') : t('QuizCard.startQuiz')}
                   <motion.svg
                     className='ml-1 h-3.5 w-3.5 sm:h-4 sm:w-4'
                     fill='none'

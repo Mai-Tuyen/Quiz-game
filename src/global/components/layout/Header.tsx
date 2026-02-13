@@ -17,14 +17,15 @@ import { useEffect, useLayoutEffect, useState } from 'react'
 import { createClient } from '../../lib/supabase/client'
 import { Menu, X } from 'lucide-react'
 import LanguageSelector from '@/global/components/common/LanguageSelector'
+import { useTranslations } from 'next-intl'
 export default function Header() {
   const router = useRouter()
+  const t = useTranslations()
   const [user, setUser] = useState<User | null>(null)
   const supabase = createClient()
   const [isAtTop, setIsAtTop] = useState(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const pathname = usePathname()
-
   useLayoutEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
@@ -87,7 +88,7 @@ export default function Header() {
               <div className='flex flex-col'>
                 <span className='text-primary text-lg font-bold sm:text-xl dark:text-white'>ZoloQuiz</span>
                 {isAtTop && pathname === '/' && (
-                  <span className='text-primary text-xs font-bold dark:text-white'>Know more daily</span>
+                  <span className='text-primary text-xs font-bold dark:text-white'>{t('Header.knowMoreDaily')}</span>
                 )}
               </div>
             </Link>
@@ -115,12 +116,12 @@ export default function Header() {
                   <DropdownMenuContent>
                     <DropdownMenuItem onClick={() => router.push('/my-quizzes')} className='cursor-pointer'>
                       <span className='hover:text-primary text-sm font-medium text-gray-600 transition-colors'>
-                        My quizzes
+                        {t('Common.myQuizzes')}
                       </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleSignOut} className='cursor-pointer'>
                       <span className='text-sm font-medium text-red-600 transition-colors hover:text-red-700'>
-                        Sign Out
+                        {t('Common.signOut')}
                       </span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -130,7 +131,7 @@ export default function Header() {
                   href='/auth/login'
                   className='text-primary rounded-md border border-gray-500 px-4 py-[6px] font-bold shadow-md transition-all duration-300 hover:scale-105'
                 >
-                  Login
+                  {t('Common.login')}
                 </Link>
               )}
             </nav>
@@ -201,7 +202,7 @@ export default function Header() {
                             d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
                           />
                         </svg>
-                        <span className='text-base font-medium'>My Quizzes</span>
+                        <span className='text-base font-medium'>{t('Common.myQuizzes')}</span>
                       </Link>
 
                       <div className='my-4 border-t border-gray-200 dark:border-gray-700' />
@@ -221,7 +222,7 @@ export default function Header() {
                             d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
                           />
                         </svg>
-                        <span className='text-base font-medium'>Sign Out</span>
+                        <span className='text-base font-medium'>{t('Common.signOut')}</span>
                       </button>
                     </>
                   ) : (
@@ -239,7 +240,7 @@ export default function Header() {
                             d='M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'
                           />
                         </svg>
-                        <span className='text-base font-medium'>Home</span>
+                        <span className='text-base font-medium'>{t('Common.home')}</span>
                       </Link>
 
                       <Link
@@ -255,7 +256,7 @@ export default function Header() {
                             d='M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1'
                           />
                         </svg>
-                        <span className='text-base font-medium'>Login</span>
+                        <span className='text-base font-medium'>{t('Common.login')}</span>
                       </Link>
                     </>
                   )}

@@ -1,8 +1,10 @@
 'use client'
 import { motion } from 'framer-motion'
 import React from 'react'
+import { useTranslations } from 'next-intl'
 
 export default function BackToHome() {
+  const t = useTranslations()
   return (
     <div>
       <motion.div
@@ -30,7 +32,7 @@ export default function BackToHome() {
           >
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 19l-7-7 7-7' />
           </motion.svg>
-          Back to Home
+          {t('Common.backToHome')}
         </motion.a>
       </motion.div>
     </div>

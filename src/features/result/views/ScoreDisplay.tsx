@@ -3,6 +3,7 @@
 import { Button } from '@/global/components/ui/button'
 import { motion } from 'framer-motion'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 interface ScoreDisplayProps {
   score: number
@@ -24,6 +25,7 @@ export default function ScoreDisplay({
   const percentage = maxScore > 0 ? (score / maxScore) * 100 : 0
   const timePercentage = timeLimit > 0 ? (timeTaken / timeLimit) * 100 : 0
   const router = useRouter()
+  const t = useTranslations()
 
   const getScoreColor = () => {
     if (percentage === 100) return 'text-yellow-500' // Gold for perfect
@@ -90,7 +92,7 @@ export default function ScoreDisplay({
             transition={{ delay: 0.6, duration: 0.5 }}
           >
             <h2 className='mb-2 text-4xl font-bold'>{performanceMessage}</h2>
-            <p className='text-xl opacity-90'>Your Results</p>
+            <p className='text-xl opacity-90'>{t('Result.yourResults')}</p>
           </motion.div>
         </div>
 
@@ -189,11 +191,11 @@ export default function ScoreDisplay({
               >
                 <div className='w-[100px] rounded-lg bg-green-50 p-4 text-center sm:w-[200px]'>
                   <div className='text-2xl font-bold text-green-600'>{score}</div>
-                  <div className='text-sm text-green-700'>Correct</div>
+                  <div className='text-sm text-green-700'>{t('Result.correct')}</div>
                 </div>
                 <div className='w-[100px] rounded-lg bg-red-50 p-4 text-center sm:w-[200px]'>
                   <div className='text-2xl font-bold text-red-600'>{maxScore - score}</div>
-                  <div className='text-sm text-red-700'>Incorrect</div>
+                  <div className='text-sm text-red-700'>{t('Result.incorrect')}</div>
                 </div>
               </motion.div>
             </div>
@@ -203,13 +205,13 @@ export default function ScoreDisplay({
                 className='cursor-pointer transition-all duration-300 hover:scale-105'
                 onClick={() => router.push('/')}
               >
-                Home
+                {t('Common.home')}
               </Button>
               <Button
                 className='cursor-pointer transition-all duration-300 hover:scale-105'
                 onClick={() => router.push(`/quizzes/${quizSlug}/info`)}
               >
-                Retry
+                {t('Common.retry')}
               </Button>
             </div>
           </div>

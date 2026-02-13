@@ -1,15 +1,16 @@
+'use client'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
 export default function NotFound() {
+  const t = useTranslations()
   return (
     <div className='bg-background flex min-h-screen flex-col items-center justify-center p-4'>
       <div className='max-w-md space-y-8 text-center'>
         <div className='space-y-4'>
           <div className='text-primary py-8 text-9xl font-bold'>404</div>
-          <h2 className='text-foreground text-3xl font-semibold'>Oops! Page Not Found</h2>
-          <p className='text-muted-foreground'>
-            The page you&apos;re looking for doesn&apos;t exist or has been moved.
-          </p>
+          <h2 className='text-foreground text-3xl font-semibold'>{t('Error.pageNotFound')}</h2>
+          <p className='text-muted-foreground'>{t('Error.pageNotFoundDescription')}</p>
         </div>
         <Link
           href='/'
@@ -26,7 +27,7 @@ export default function NotFound() {
           >
             <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M10 19l-7-7m0 0l7-7m-7 7h18' />
           </svg>
-          Back to Home
+          {t('Common.backToHome')}
         </Link>
       </div>
     </div>
