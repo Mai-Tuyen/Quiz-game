@@ -1,7 +1,7 @@
 import { getCategoryBySlugAPI } from '@/features/category'
 import MotionWrapper from '@/features/category/views/components/MotionWrapper'
 import { getQuizzesByCategoryAPI, QuizCard } from '@/features/quiz'
-import BackToHome from '@/global/components/BackToHome'
+import BackToHome from '@/global/components/common/BackToHome'
 
 export default async function CategoryQuizzesPage({ categorySlug }: { categorySlug: string }) {
   const [category, quizzes] = await Promise.all([

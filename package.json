@@ -34,6 +34,7 @@
     "next-intl": "^4.8.2",
     "npm": "^11.6.0",
     "postcss-pxtorem": "^6.1.0",
+    "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-error-boundary": "^6.0.0",
