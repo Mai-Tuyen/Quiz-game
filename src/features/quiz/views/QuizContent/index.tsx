@@ -28,6 +28,7 @@ export default function QuizDetailView() {
   const router = useRouter()
   const quizSlug = params.slug as string
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+  const [isNavigatingToResult, setIsNavigatingToResult] = useState(false)
 
   const { data: quiz, isLoading: isQuizLoading, error: quizError } = useGetQuizWithQuestionsQuery(quizSlug)
   const {
@@ -40,6 +41,9 @@ export default function QuizDetailView() {
 
   // Redirect to quiz info when no incomplete quiz attempt is found (only after fetch completes, to avoid redirecting on stale cache after creating attempt)
   useEffect(() => {
+    // Don't redirect if we're navigating to results after submission
+    if (isNavigatingToResult) return
+
     if (!quiz?.id || isQuizLoading) return
     if (!userId) {
       router.replace(`/quizzes/${quizSlug}/info`)
@@ -56,7 +60,8 @@ export default function QuizDetailView() {
     isCurrentAttemptFetched,
     isCurrentAttemptFetching,
     currentAttempt,
-    router
+    router,
+    isNavigatingToResult
   ])
   const { data: allAnswers } = useGetAllAnswerOfQuizAttemptQuery(currentAttempt?.id as string, !!currentAttempt?.id)
   const { mutate: upsertUserAnswer } = useUpsertUserAnswerMutation()
@@ -93,17 +98,26 @@ export default function QuizDetailView() {
   const handleSubmitQuiz = async () => {
     if (!currentAttempt?.id || isSubmitting) return
 
+    // Set flag to prevent redirect effect from interfering
+    setIsNavigatingToResult(true)
+
     submitQuizAttempt(currentAttempt.id, {
       onSuccess: (data) => {
-        // navigate to results page
-        router.push(`/result/${currentAttempt.id}`)
+        // navigate to results page (use replace to ensure clean navigation)
+        router.replace(`/result/${currentAttempt.id}`)
       },
-      onError: (error) => {}
+      onError: (error) => {
+        // Reset flag on error so user can try again
+        setIsNavigatingToResult(false)
+      }
     })
   }
 
   const shouldRedirectToInfo =
-    quiz?.id && !isQuizLoading && (!userId || (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt))
+    !isNavigatingToResult &&
+    quiz?.id &&
+    !isQuizLoading &&
+    (!userId || (!isCurrentAttemptFetching && isCurrentAttemptFetched && !currentAttempt))
 
   if (isQuizLoading) {
     return <QuizLoading />
