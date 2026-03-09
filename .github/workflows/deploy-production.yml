@@ -36,4 +36,4 @@ jobs:
             docker pull maituyen96/zoloquiz:v0
             docker stop prod-zoloquiz || true
             docker rm prod-zoloquiz || true
-            docker run -d -p 3001:3001 --name prod-zoloquiz maituyen96/zoloquiz:v0
+            docker run -d -p 3001:3000 --name prod-zoloquiz maituyen96/zoloquiz:v0

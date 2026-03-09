@@ -8,7 +8,9 @@ export default function ErrorFallback({ error, resetErrorBoundary }: FallbackPro
     <div className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-black via-blue-900 via-purple-900 to-pink-700 p-4 text-white'>
       <div className='max-w-md space-y-6 text-center'>
         <h2 className='text-3xl font-semibold'>Something Went Wrong</h2>
-        {error && <p className='text-sm text-red-200'>{error.message || 'An unexpected error occurred'}</p>}
+        <p className='text-sm text-red-200'>
+          {error instanceof Error ? error.message || 'An unexpected error occurred' : 'An unexpected error occurred'}
+        </p>
       </div>
       <div className='mt-6 flex gap-4'>
         <button
