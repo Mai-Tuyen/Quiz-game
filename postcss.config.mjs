@@ -6,7 +6,14 @@ const config = {
       {
         rootValue: 16,
         unitPrecision: 5,
-        propList: ['*'],
+        propList: [
+          '*',
+          '!border-radius',
+          '!border-top-left-radius',
+          '!border-top-right-radius',
+          '!border-bottom-right-radius',
+          '!border-bottom-left-radius'
+        ],
         selectorBlackList: [],
         replace: true,
         mediaQuery: false,

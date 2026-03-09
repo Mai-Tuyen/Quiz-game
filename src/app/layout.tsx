@@ -1,12 +1,10 @@
-import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import '@/global/globals.css'
-import Header from '@/global/components/layout/Header'
-import Footer from '@/global/components/layout/Footer'
-import TanstackQueryProvider from '@/global/lib/providers/TanstackqueryProvider'
 import ScrollToTop from '@/global/components/common/ScrollToTop'
 import ErrorBoundaryProvider from '@/global/lib/providers/ErrorBoundary'
+import TanstackQueryProvider from '@/global/lib/providers/TanstackqueryProvider'
+import '@/global/globals.css'
+import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
+import { Geist, Geist_Mono } from 'next/font/google'
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin']
