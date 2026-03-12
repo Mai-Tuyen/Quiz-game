@@ -75,7 +75,9 @@
     "completed": "Completed",
     "inProgress": "In Progress",
     "viewResults": "View Results",
-    "continue": "Continue"
+    "continue": "Continue",
+    "retry": "Retry",
+    "timeUpAutoSubmit": "Quiz submitted automatically (time up)"
   },
   "Result": {
     "loadingResults": "Loading Results...",

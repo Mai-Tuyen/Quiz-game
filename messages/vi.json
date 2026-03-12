@@ -75,7 +75,9 @@
     "completed": "Đã hoàn thành",
     "inProgress": "Đang làm",
     "viewResults": "Xem kết quả",
-    "continue": "Tiếp tục"
+    "continue": "Tiếp tục",
+    "retry": "Làm lại",
+    "timeUpAutoSubmit": "Bài quiz đã được nộp tự động (hết giờ)"
   },
   "Result": {
     "loadingResults": "Đang tải kết quả...",

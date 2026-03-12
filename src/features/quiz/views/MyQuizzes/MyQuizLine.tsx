@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { toast } from 'react-toastify'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -18,6 +19,7 @@ interface MyQuizLineProps {
 }
 
 export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
+  const t = useTranslations('MyQuizzes')
   const queryClient = useQueryClient()
   const { mutate: submitQuizAttempt, isPending: isSubmitting } = useSubmitQuizAttemptMutation()
   const quiz = quizAttempt.quiz
@@ -33,18 +35,18 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
     if (isSubmitting) return
     submitQuizAttempt(quizAttempt.id, {
       onSuccess: () => {
-        toast.success('Quiz submitted automatically (time up)')
+        toast.success(t('timeUpAutoSubmit'))
         queryClient.invalidateQueries({ queryKey: ['all-quiz-attempts'] })
       },
       onError: (error) => {
         toast.error(error.message)
       }
     })
-  }, [quizAttempt.id, isSubmitting, submitQuizAttempt])
+  }, [quizAttempt.id, isSubmitting, submitQuizAttempt, t])
 
   const scoreLabel = isCompleted ? `${quizAttempt.score} / ${quizAttempt.max_score}` : '- / -'
 
-  const statusLabel = isCompleted ? 'Completed' : 'In progress'
+  const statusLabel = isCompleted ? t('completed') : t('inProgress')
   const statusClass = isCompleted
     ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
     : 'bg-amber-100 text-amber-800 border-amber-200'
@@ -91,7 +93,7 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
           </div>
           <div className='flex flex-wrap items-center gap-2 sm:gap-3'>
             <span className='text-xs text-gray-600 sm:text-sm'>
-              <span className='hidden sm:inline'>Score: </span>
+              <span className='hidden sm:inline'>{t('score')}: </span>
               <span className='font-medium text-gray-900'>{scoreLabel}</span>
             </span>
             <span
@@ -114,12 +116,12 @@ export default function MyQuizLine({ quizAttempt, index }: MyQuizLineProps) {
               size='sm'
               asChild
             >
-              <Link href={`/quizzes/${quiz.slug}/info`}>Retry</Link>
+              <Link href={`/quizzes/${quiz.slug}/info`}>{t('retry')}</Link>
             </Button>
           ) : (
             <>
               <Button className='h-8 w-16 cursor-pointer text-xs sm:h-9 sm:w-20 sm:text-sm' size='sm' asChild>
-                <Link href={`/quizzes/${quiz.slug}`}>Continue</Link>
+                <Link href={`/quizzes/${quiz.slug}`}>{t('continue')}</Link>
               </Button>
             </>
           )}
